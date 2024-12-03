@@ -12,10 +12,34 @@ const AccountingDashboard = () => {
   ];
 
   const transactions = [
-    { id: "TXN-001", description: "Salary Payment", date: "2023-12-01", amount: "$50,000", status: "Completed" },
-    { id: "TXN-002", description: "Electricity Bill", date: "2023-12-05", amount: "$1,200", status: "Completed" },
-    { id: "TXN-003", description: "Office Supplies", date: "2023-12-08", amount: "$450", status: "Pending" },
-    { id: "TXN-004", description: "Software Subscription", date: "2023-12-10", amount: "$3,500", status: "Completed" },
+    {
+      id: "TXN-001",
+      description: "Salary Payment",
+      date: "2023-12-01",
+      amount: "$50,000",
+      status: "Completed",
+    },
+    {
+      id: "TXN-002",
+      description: "Electricity Bill",
+      date: "2023-12-05",
+      amount: "$1,200",
+      status: "Completed",
+    },
+    {
+      id: "TXN-003",
+      description: "Office Supplies",
+      date: "2023-12-08",
+      amount: "$450",
+      status: "Pending",
+    },
+    {
+      id: "TXN-004",
+      description: "Software Subscription",
+      date: "2023-12-10",
+      amount: "$3,500",
+      status: "Completed",
+    },
   ];
 
   return (
@@ -43,11 +67,21 @@ const AccountingDashboard = () => {
         <table className="w-full text-sm text-left text-gray-300 bg-[#2E3A47] rounded-lg">
           <thead className="text-xs uppercase bg-[#394957] text-gray-200">
             <tr>
-              <th scope="col" className="px-6 py-3">Transaction ID</th>
-              <th scope="col" className="px-6 py-3">Description</th>
-              <th scope="col" className="px-6 py-3">Date</th>
-              <th scope="col" className="px-6 py-3">Amount</th>
-              <th scope="col" className="px-6 py-3">Status</th>
+              <th scope="col" className="px-6 py-3">
+                Transaction ID
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Description
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Date
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Amount
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Status
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -64,7 +98,9 @@ const AccountingDashboard = () => {
                 <td className="px-6 py-4">{txn.amount}</td>
                 <td
                   className={`px-6 py-4 ${
-                    txn.status === "Pending" ? "text-yellow-400" : "text-green-400"
+                    txn.status === "Pending"
+                      ? "text-yellow-400"
+                      : "text-green-400"
                   }`}
                 >
                   {txn.status}

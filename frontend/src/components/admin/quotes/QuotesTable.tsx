@@ -40,17 +40,17 @@ const QuotesTable = () => {
         <div>
           <h1 className="text-lg font-semibold text-gray-100">Quotes</h1>
           <p className="text-sm text-gray-400">
-            Browse a list of quotes, including client details, status, and total amounts.
+            Browse a list of quotes, including client details, status, and total
+            amounts.
           </p>
         </div>
         <button
-  onClick={() => setIsModalOpen(true)}
-  className="flex items-center px-2 py-2 bg-blue-700 text-white font-medium text-sm rounded-lg hover:bg-blue-600 w-fit"
->
-  <FaPlus className="mr-2 text-sm" />
-  Add Quote
-</button>
-
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center px-2 py-2 bg-blue-700 text-white font-medium text-sm rounded-lg hover:bg-blue-600 w-fit"
+        >
+          <FaPlus className="mr-2 text-sm" />
+          Add Quote
+        </button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left text-gray-300">
@@ -80,10 +80,16 @@ const QuotesTable = () => {
                 <td className="px-6 py-4">{quote.status}</td>
                 <td className="px-6 py-4">{quote.items}</td>
                 <td className="px-6 py-4 text-center space-x-2">
-                  <button className="text-blue-500 hover:text-blue-700" title="Edit Quote">
+                  <button
+                    className="text-blue-500 hover:text-blue-700"
+                    title="Edit Quote"
+                  >
                     <FaEdit />
                   </button>
-                  <button className="text-red-500 hover:text-red-700" title="Delete Quote">
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    title="Delete Quote"
+                  >
                     <FaTrash />
                   </button>
                 </td>

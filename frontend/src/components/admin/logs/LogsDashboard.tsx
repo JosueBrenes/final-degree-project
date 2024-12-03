@@ -5,11 +5,41 @@ import { FaFilter, FaSearch } from "react-icons/fa";
 
 const LogsDashboard = () => {
   const logs = [
-    { id: "LOG-001", user: "Admin", action: "Created new user", date: "2023-12-01", severity: "Info" },
-    { id: "LOG-002", user: "John Doe", action: "Updated settings", date: "2023-12-02", severity: "Warning" },
-    { id: "LOG-003", user: "Jane Smith", action: "Deleted a record", date: "2023-12-03", severity: "Critical" },
-    { id: "LOG-004", user: "System", action: "Backup completed", date: "2023-12-04", severity: "Info" },
-    { id: "LOG-005", user: "Admin", action: "Reset password", date: "2023-12-05", severity: "Warning" },
+    {
+      id: "LOG-001",
+      user: "Admin",
+      action: "Created new user",
+      date: "2023-12-01",
+      severity: "Info",
+    },
+    {
+      id: "LOG-002",
+      user: "John Doe",
+      action: "Updated settings",
+      date: "2023-12-02",
+      severity: "Warning",
+    },
+    {
+      id: "LOG-003",
+      user: "Jane Smith",
+      action: "Deleted a record",
+      date: "2023-12-03",
+      severity: "Critical",
+    },
+    {
+      id: "LOG-004",
+      user: "System",
+      action: "Backup completed",
+      date: "2023-12-04",
+      severity: "Info",
+    },
+    {
+      id: "LOG-005",
+      user: "Admin",
+      action: "Reset password",
+      date: "2023-12-05",
+      severity: "Warning",
+    },
   ];
 
   const [filters, setFilters] = useState({
@@ -18,7 +48,9 @@ const LogsDashboard = () => {
     date: "",
   });
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleFilterChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
     setFilters({ ...filters, [name]: value });
   };
@@ -33,7 +65,10 @@ const LogsDashboard = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
-          <label htmlFor="user" className="block text-sm font-medium text-gray-400">
+          <label
+            htmlFor="user"
+            className="block text-sm font-medium text-gray-400"
+          >
             User
           </label>
           <input
@@ -47,7 +82,10 @@ const LogsDashboard = () => {
           />
         </div>
         <div>
-          <label htmlFor="severity" className="block text-sm font-medium text-gray-400">
+          <label
+            htmlFor="severity"
+            className="block text-sm font-medium text-gray-400"
+          >
             Severity
           </label>
           <select
@@ -64,7 +102,10 @@ const LogsDashboard = () => {
           </select>
         </div>
         <div>
-          <label htmlFor="date" className="block text-sm font-medium text-gray-400">
+          <label
+            htmlFor="date"
+            className="block text-sm font-medium text-gray-400"
+          >
             Date
           </label>
           <input
@@ -82,11 +123,21 @@ const LogsDashboard = () => {
         <table className="w-full text-sm text-left text-gray-300 bg-[#2E3A47] rounded-lg">
           <thead className="text-xs uppercase bg-[#394957] text-gray-200">
             <tr>
-              <th scope="col" className="px-6 py-3">Log ID</th>
-              <th scope="col" className="px-6 py-3">User</th>
-              <th scope="col" className="px-6 py-3">Action</th>
-              <th scope="col" className="px-6 py-3">Date</th>
-              <th scope="col" className="px-6 py-3">Severity</th>
+              <th scope="col" className="px-6 py-3">
+                Log ID
+              </th>
+              <th scope="col" className="px-6 py-3">
+                User
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Action
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Date
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Severity
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -97,7 +148,9 @@ const LogsDashboard = () => {
                   index % 2 === 0 ? "bg-[#2E3A47]" : "bg-[#3A4A57]"
                 } border-b border-gray-600`}
               >
-                <td className="px-6 py-4 font-medium text-gray-100">{log.id}</td>
+                <td className="px-6 py-4 font-medium text-gray-100">
+                  {log.id}
+                </td>
                 <td className="px-6 py-4">{log.user}</td>
                 <td className="px-6 py-4">{log.action}</td>
                 <td className="px-6 py-4">{log.date}</td>
@@ -106,8 +159,8 @@ const LogsDashboard = () => {
                     log.severity === "Critical"
                       ? "text-red-400"
                       : log.severity === "Warning"
-                      ? "text-yellow-400"
-                      : "text-green-400"
+                        ? "text-yellow-400"
+                        : "text-green-400"
                   }`}
                 >
                   {log.severity}

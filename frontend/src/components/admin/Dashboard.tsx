@@ -1,7 +1,12 @@
 "use client";
 
 import React from "react";
-import { FaUsers, FaFileInvoiceDollar, FaClipboardCheck, FaBoxOpen } from "react-icons/fa";
+import {
+  FaUsers,
+  FaFileInvoiceDollar,
+  FaClipboardCheck,
+  FaBoxOpen,
+} from "react-icons/fa";
 
 const Dashboard = () => {
   return (
@@ -54,7 +59,9 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div className="bg-[#2E3A47] p-6 rounded-lg shadow-lg">
-          <h3 className="text-lg font-semibold mb-4">Recent Employee Activity</h3>
+          <h3 className="text-lg font-semibold mb-4">
+            Recent Employee Activity
+          </h3>
           <ul className="space-y-4">
             <li className="bg-[#394957] p-4 rounded-md flex justify-between">
               <span>Carlos Pérez completed training</span>

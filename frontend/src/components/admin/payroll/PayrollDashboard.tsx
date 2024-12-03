@@ -5,9 +5,33 @@ import { FaFilePdf, FaCalculator, FaDownload } from "react-icons/fa";
 
 const PayrollDashboard = () => {
   const [payroll, setPayroll] = useState([
-    { id: "EMP-001", name: "Carlos Pérez", position: "General Manager", salary: 5000, bonus: 200, deductions: 300, netPay: 4900 },
-    { id: "EMP-002", name: "María López", position: "Administrative Manager", salary: 4000, bonus: 150, deductions: 200, netPay: 3950 },
-    { id: "EMP-003", name: "Jorge Castillo", position: "Operations Manager", salary: 4500, bonus: 250, deductions: 300, netPay: 4450 },
+    {
+      id: "EMP-001",
+      name: "Carlos Pérez",
+      position: "General Manager",
+      salary: 5000,
+      bonus: 200,
+      deductions: 300,
+      netPay: 4900,
+    },
+    {
+      id: "EMP-002",
+      name: "María López",
+      position: "Administrative Manager",
+      salary: 4000,
+      bonus: 150,
+      deductions: 200,
+      netPay: 3950,
+    },
+    {
+      id: "EMP-003",
+      name: "Jorge Castillo",
+      position: "Operations Manager",
+      salary: 4500,
+      bonus: 250,
+      deductions: 300,
+      netPay: 4450,
+    },
   ]);
 
   const totalSalary = payroll.reduce((acc, emp) => acc + emp.salary, 0);
@@ -28,7 +52,8 @@ const PayrollDashboard = () => {
               <span>Total Bonuses:</span> <span>${totalBonus.toFixed(2)}</span>
             </li>
             <li className="flex justify-between">
-              <span>Total Deductions:</span> <span>${totalDeductions.toFixed(2)}</span>
+              <span>Total Deductions:</span>{" "}
+              <span>${totalDeductions.toFixed(2)}</span>
             </li>
             <li className="flex justify-between font-bold">
               <span>Total Net Pay:</span> <span>${totalNetPay.toFixed(2)}</span>
@@ -81,7 +106,9 @@ const PayrollDashboard = () => {
                   <td className="px-6 py-4">{employee.position}</td>
                   <td className="px-6 py-4">${employee.salary.toFixed(2)}</td>
                   <td className="px-6 py-4">${employee.bonus.toFixed(2)}</td>
-                  <td className="px-6 py-4">${employee.deductions.toFixed(2)}</td>
+                  <td className="px-6 py-4">
+                    ${employee.deductions.toFixed(2)}
+                  </td>
                   <td className="px-6 py-4 font-bold">
                     ${employee.netPay.toFixed(2)}
                   </td>

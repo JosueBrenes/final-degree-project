@@ -32,7 +32,9 @@ const InventoryModal = ({ onClose }) => {
         </div>
         <form className="p-4">
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-400">Name</label>
+            <label className="block text-sm font-medium text-gray-400">
+              Name
+            </label>
             <input
               type="text"
               className="mt-1 p-2 w-full bg-gray-700 text-white border border-gray-600 rounded-lg"
@@ -40,7 +42,9 @@ const InventoryModal = ({ onClose }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-400">Category</label>
+            <label className="block text-sm font-medium text-gray-400">
+              Category
+            </label>
             <input
               type="text"
               className="mt-1 p-2 w-full bg-gray-700 text-white border border-gray-600 rounded-lg"
@@ -48,7 +52,9 @@ const InventoryModal = ({ onClose }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-400">Quantity</label>
+            <label className="block text-sm font-medium text-gray-400">
+              Quantity
+            </label>
             <input
               type="number"
               className="mt-1 p-2 w-full bg-gray-700 text-white border border-gray-600 rounded-lg"
@@ -56,7 +62,9 @@ const InventoryModal = ({ onClose }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-400">Supplier</label>
+            <label className="block text-sm font-medium text-gray-400">
+              Supplier
+            </label>
             <input
               type="text"
               className="mt-1 p-2 w-full bg-gray-700 text-white border border-gray-600 rounded-lg"

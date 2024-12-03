@@ -8,19 +8,110 @@ const EmployeesTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const employees = [
-    { id: "EMP-001", name: "Carlos Pérez", position: "General Manager", department: "Management", status: "Active", startDate: "2015-01-15" },
-    { id: "EMP-002", name: "María López", position: "Administrative/Financial Manager", department: "Administration", status: "Active", startDate: "2017-03-01" },
-    { id: "EMP-003", name: "Jorge Castillo", position: "Operations Manager", department: "Operations", status: "Active", startDate: "2018-05-12" },
-    { id: "EMP-004", name: "Luisa Sánchez", position: "BonAqua Manager", department: "Production", status: "Active", startDate: "2019-07-22" },
-    { id: "EMP-005", name: "Ana Morales", position: "Administrative Assistant 3M/BonAqua", department: "Administration", status: "Active", startDate: "2020-08-15" },
-    { id: "EMP-006", name: "Pedro Gutiérrez", position: "BonAqua Operator", department: "Production", status: "Active", startDate: "2021-02-10" },
-    { id: "EMP-007", name: "Diego Vargas", position: "3M Operator", department: "Production", status: "Active", startDate: "2021-02-10" },
-    { id: "EMP-008", name: "Clara Fernández", position: "Accounting Manager", department: "Finance", status: "Active", startDate: "2016-04-05" },
-    { id: "EMP-009", name: "Laura Ortiz", position: "Receptionist", department: "Administration", status: "Active", startDate: "2022-06-25" },
-    { id: "EMP-010", name: "Ricardo Gómez", position: "Workshop Manager", department: "Workshop", status: "Active", startDate: "2018-11-01" },
-    { id: "EMP-011", name: "Juan Martínez", position: "Welder", department: "Workshop", status: "Active", startDate: "2020-09-14" },
-    { id: "EMP-012", name: "Sofía Rojas", position: "Warehouse Manager", department: "Warehouse", status: "Active", startDate: "2017-02-28" },
-    { id: "EMP-013", name: "Andrés Blanco", position: "Mechanics Manager", department: "Mechanics", status: "Active", startDate: "2019-10-10" },
+    {
+      id: "EMP-001",
+      name: "Carlos Pérez",
+      position: "General Manager",
+      department: "Management",
+      status: "Active",
+      startDate: "2015-01-15",
+    },
+    {
+      id: "EMP-002",
+      name: "María López",
+      position: "Administrative/Financial Manager",
+      department: "Administration",
+      status: "Active",
+      startDate: "2017-03-01",
+    },
+    {
+      id: "EMP-003",
+      name: "Jorge Castillo",
+      position: "Operations Manager",
+      department: "Operations",
+      status: "Active",
+      startDate: "2018-05-12",
+    },
+    {
+      id: "EMP-004",
+      name: "Luisa Sánchez",
+      position: "BonAqua Manager",
+      department: "Production",
+      status: "Active",
+      startDate: "2019-07-22",
+    },
+    {
+      id: "EMP-005",
+      name: "Ana Morales",
+      position: "Administrative Assistant 3M/BonAqua",
+      department: "Administration",
+      status: "Active",
+      startDate: "2020-08-15",
+    },
+    {
+      id: "EMP-006",
+      name: "Pedro Gutiérrez",
+      position: "BonAqua Operator",
+      department: "Production",
+      status: "Active",
+      startDate: "2021-02-10",
+    },
+    {
+      id: "EMP-007",
+      name: "Diego Vargas",
+      position: "3M Operator",
+      department: "Production",
+      status: "Active",
+      startDate: "2021-02-10",
+    },
+    {
+      id: "EMP-008",
+      name: "Clara Fernández",
+      position: "Accounting Manager",
+      department: "Finance",
+      status: "Active",
+      startDate: "2016-04-05",
+    },
+    {
+      id: "EMP-009",
+      name: "Laura Ortiz",
+      position: "Receptionist",
+      department: "Administration",
+      status: "Active",
+      startDate: "2022-06-25",
+    },
+    {
+      id: "EMP-010",
+      name: "Ricardo Gómez",
+      position: "Workshop Manager",
+      department: "Workshop",
+      status: "Active",
+      startDate: "2018-11-01",
+    },
+    {
+      id: "EMP-011",
+      name: "Juan Martínez",
+      position: "Welder",
+      department: "Workshop",
+      status: "Active",
+      startDate: "2020-09-14",
+    },
+    {
+      id: "EMP-012",
+      name: "Sofía Rojas",
+      position: "Warehouse Manager",
+      department: "Warehouse",
+      status: "Active",
+      startDate: "2017-02-28",
+    },
+    {
+      id: "EMP-013",
+      name: "Andrés Blanco",
+      position: "Mechanics Manager",
+      department: "Mechanics",
+      status: "Active",
+      startDate: "2019-10-10",
+    },
     ...Array.from({ length: 19 }, (_, i) => ({
       id: `EMP-${14 + i}`,
       name: `Assistant ${i + 1}`,
@@ -48,7 +139,9 @@ const EmployeesTable = () => {
             <FaPlus className="mr-2" /> Add Employee
           </button>
           <button
-            onClick={() => (window.location.href = "/admin/employees/vacations")}
+            onClick={() =>
+              (window.location.href = "/admin/employees/vacations")
+            }
             className="flex items-center px-4 py-2 bg-blue-700 text-white font-medium text-sm rounded-lg hover:bg-blue-600"
           >
             <FaPlane className="mr-2" />
@@ -87,10 +180,16 @@ const EmployeesTable = () => {
                 <td className="px-6 py-4">{employee.status}</td>
                 <td className="px-6 py-4">{employee.startDate}</td>
                 <td className="px-6 py-4 text-center flex justify-center gap-4">
-                  <button className="text-blue-500 hover:text-blue-700" title="Edit">
+                  <button
+                    className="text-blue-500 hover:text-blue-700"
+                    title="Edit"
+                  >
                     <FaEdit />
                   </button>
-                  <button className="text-red-500 hover:text-red-700" title="Delete">
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    title="Delete"
+                  >
                     <FaTrash />
                   </button>
                 </td>
@@ -100,9 +199,7 @@ const EmployeesTable = () => {
         </table>
       </div>
 
-      {isModalOpen && (
-        <EmployeesModal onClose={() => setIsModalOpen(false)} />
-      )}
+      {isModalOpen && <EmployeesModal onClose={() => setIsModalOpen(false)} />}
     </div>
   );
 };

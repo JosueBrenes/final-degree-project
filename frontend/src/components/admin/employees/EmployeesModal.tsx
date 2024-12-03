@@ -4,9 +4,7 @@ import React from "react";
 
 const EmployeesModal = ({ onClose }) => {
   return (
-    <div
-      className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 px-4 sm:px-6 lg:px-8"
-    >
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 px-4 sm:px-6 lg:px-8">
       <div className="bg-[#232F3E] rounded-lg shadow-lg max-w-md w-full mx-auto">
         <div className="flex items-center justify-between p-4 border-b border-gray-600">
           <h3 className="text-lg font-semibold text-white">Add New Employee</h3>
@@ -60,7 +58,9 @@ const EmployeesModal = ({ onClose }) => {
             >
               <option value="">Select Position</option>
               <option value="General Manager">General Manager</option>
-              <option value="Administrative Manager">Administrative Manager</option>
+              <option value="Administrative Manager">
+                Administrative Manager
+              </option>
               <option value="Operator Assistant">Operator Assistant</option>
             </select>
           </div>
