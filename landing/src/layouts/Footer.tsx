@@ -5,7 +5,7 @@ import { FaFacebook, FaInstagram } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#2E3A47] py-6 text-center">
+    <footer className="py-6 text-center">
       <div className="container mx-auto px-6">
         <p className="text-gray-400 mb-4">
           &copy; 2024 Arce y Vargas. Todos los derechos reservados.

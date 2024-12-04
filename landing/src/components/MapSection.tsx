@@ -4,8 +4,8 @@ import React from "react";
 
 const MapSection = () => {
   return (
-    <section id="location" className="py-12">
-      <div className="container mx-auto px-6 text-center">
+    <section id="location" className="py-12 bg-[#2E3A47]">
+      <div className="container mx-auto px-6 text-center ">
         <h2 className="text-3xl font-bold mb-6">Nuestra Ubicación</h2>
         <p className="text-gray-400 max-w-3xl mx-auto mb-8">
           Encuéntranos en el corazón de San José, Costa Rica.

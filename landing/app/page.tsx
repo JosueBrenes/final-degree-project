@@ -6,6 +6,7 @@ import AboutSection from "@/components/AboutSection";
 import Footer from "@/layouts/Footer";
 import ServicesSection from "@/components/ServicesSection";
 import MapSection from "@/components/MapSection";
+import ClientsSection from "@/components/ClientsSection"; 
 
 const InformativePage = () => {
   return (
@@ -14,6 +15,7 @@ const InformativePage = () => {
       <HeroSection />
       <AboutSection />
       <ServicesSection />
+      <ClientsSection /> 
       <MapSection />
       <Footer />
     </div>

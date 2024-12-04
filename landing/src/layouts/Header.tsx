@@ -30,10 +30,16 @@ const Header = () => {
             Servicios
           </a>
           <a
-            href="#team"
+            href="#clients"
             className="text-gray-300 hover:text-gray-100 transition-colors"
           >
-            Equipo
+            Clientes
+          </a>
+          <a
+            href="#location"
+            className="text-gray-300 hover:text-gray-100 transition-colors"
+          >
+            Ubicación
           </a>
           <a
             href="#contact"
@@ -76,10 +82,18 @@ const Header = () => {
               </li>
               <li>
                 <a
-                  href="#team"
+                  href="#clients"
                   className="block text-gray-300 hover:text-gray-100 transition-colors"
                 >
-                  Equipo
+                  Clientes
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#location"
+                  className="block text-gray-300 hover:text-gray-100 transition-colors"
+                >
+                  Ubicación
                 </a>
               </li>
               <li>
