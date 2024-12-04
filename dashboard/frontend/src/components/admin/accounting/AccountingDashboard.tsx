@@ -1,16 +1,14 @@
 "use client";
 
 import React from "react";
-import { FaChartPie, FaFileInvoiceDollar } from "react-icons/fa";
+import {
+  FaChartPie,
+  FaFileInvoiceDollar,
+  FaDollarSign,
+  FaClipboardList,
+} from "react-icons/fa";
 
 const AccountingDashboard = () => {
-  const expensesData = [
-    { category: "Salaries", amount: "$50,000" },
-    { category: "Utilities", amount: "$10,000" },
-    { category: "Office Supplies", amount: "$5,000" },
-    { category: "Miscellaneous", amount: "$2,500" },
-  ];
-
   const transactions = [
     {
       id: "TXN-001",
@@ -60,6 +58,16 @@ const AccountingDashboard = () => {
           <FaChartPie className="text-4xl mb-2 text-green-500" />
           <h3 className="text-lg font-medium">Completed Transactions</h3>
           <p className="text-xl font-semibold">3</p>
+        </div>
+        <div className="flex flex-col items-center bg-gray-800 p-4 rounded-lg shadow">
+          <FaDollarSign className="text-4xl mb-2 text-yellow-400" />
+          <h3 className="text-lg font-medium">Pending Payments</h3>
+          <p className="text-xl font-semibold">$450</p>
+        </div>
+        <div className="flex flex-col items-center bg-gray-800 p-4 rounded-lg shadow">
+          <FaClipboardList className="text-4xl mb-2 text-red-500" />
+          <h3 className="text-lg font-medium">Total Transactions</h3>
+          <p className="text-xl font-semibold">{transactions.length}</p>
         </div>
       </div>
       <div className="overflow-x-auto">

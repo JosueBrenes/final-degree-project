@@ -41,26 +41,26 @@ const PayrollDashboard = () => {
 
   return (
     <div className="p-6 bg-[#232F3E] text-gray-200 mt-20 md:mt-0">
-    <div className="grid grid-cols-1 gap-6 mb-6">
-      <div className="p-6 bg-[#2E3A47] rounded-lg shadow-lg">
-        <h2 className="text-lg font-semibold mb-4">Payroll Summary</h2>
-        <ul className="text-sm space-y-2">
-          <li className="flex justify-between">
-            <span>Total Salary:</span> <span>${totalSalary.toFixed(2)}</span>
-          </li>
-          <li className="flex justify-between">
-            <span>Total Bonuses:</span> <span>${totalBonus.toFixed(2)}</span>
-          </li>
-          <li className="flex justify-between">
-            <span>Total Deductions:</span>{" "}
-            <span>${totalDeductions.toFixed(2)}</span>
-          </li>
-          <li className="flex justify-between font-bold">
-            <span>Total Net Pay:</span> <span>${totalNetPay.toFixed(2)}</span>
-          </li>
-        </ul>
-      </div>
-      <div className="mt-6 flex flex-wrap justify-center gap-4">
+      <div className="grid grid-cols-1 gap-6 mb-6">
+        <div className="p-6 bg-[#2E3A47] rounded-lg shadow-lg">
+          <h2 className="text-lg font-semibold mb-4">Payroll Summary</h2>
+          <ul className="text-sm space-y-2">
+            <li className="flex justify-between">
+              <span>Total Salary:</span> <span>${totalSalary.toFixed(2)}</span>
+            </li>
+            <li className="flex justify-between">
+              <span>Total Bonuses:</span> <span>${totalBonus.toFixed(2)}</span>
+            </li>
+            <li className="flex justify-between">
+              <span>Total Deductions:</span>{" "}
+              <span>${totalDeductions.toFixed(2)}</span>
+            </li>
+            <li className="flex justify-between font-bold">
+              <span>Total Net Pay:</span> <span>${totalNetPay.toFixed(2)}</span>
+            </li>
+          </ul>
+        </div>
+        <div className="mt-6 flex flex-wrap justify-center gap-4">
           <button className="w-48 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
             <FaCalculator className="mr-2 inline" />
             Calculate Payroll
@@ -74,57 +74,59 @@ const PayrollDashboard = () => {
             Export to Excel
           </button>
         </div>
-    </div>
-    <div>
-      <h2 className="text-lg font-semibold mb-4">Employee Payroll Details</h2>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left text-gray-300 bg-[#2E3A47] rounded-lg">
-          <thead className="text-xs uppercase bg-[#394957] text-gray-200">
-            <tr>
-              <th className="px-6 py-3">Employee ID</th>
-              <th className="px-6 py-3">Name</th>
-              <th className="px-6 py-3">Position</th>
-              <th className="px-6 py-3">Salary</th>
-              <th className="px-6 py-3">Bonus</th>
-              <th className="px-6 py-3">Deductions</th>
-              <th className="px-6 py-3">Net Pay</th>
-              <th className="px-6 py-3 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {payroll.map((employee, index) => (
-              <tr
-                key={employee.id}
-                className={`${
-                  index % 2 === 0 ? "bg-[#2E3A47]" : "bg-[#3A4A57]"
-                } border-b border-gray-600`}
-              >
-                <td className="px-6 py-4 font-medium text-gray-100">
-                  {employee.id}
-                </td>
-                <td className="px-6 py-4">{employee.name}</td>
-                <td className="px-6 py-4">{employee.position}</td>
-                <td className="px-6 py-4">${employee.salary.toFixed(2)}</td>
-                <td className="px-6 py-4">${employee.bonus.toFixed(2)}</td>
-                <td className="px-6 py-4">${employee.deductions.toFixed(2)}</td>
-                <td className="px-6 py-4 font-bold">
-                  ${employee.netPay.toFixed(2)}
-                </td>
-                <td className="px-6 py-4 text-center flex justify-center gap-4">
-                  <button
-                    title="Download Receipt"
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    <FaDownload />
-                  </button>
-                </td>
+      </div>
+      <div>
+        <h2 className="text-lg font-semibold mb-4">Employee Payroll Details</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left text-gray-300 bg-[#2E3A47] rounded-lg">
+            <thead className="text-xs uppercase bg-[#394957] text-gray-200">
+              <tr>
+                <th className="px-6 py-3">Employee ID</th>
+                <th className="px-6 py-3">Name</th>
+                <th className="px-6 py-3">Position</th>
+                <th className="px-6 py-3">Salary</th>
+                <th className="px-6 py-3">Bonus</th>
+                <th className="px-6 py-3">Deductions</th>
+                <th className="px-6 py-3">Net Pay</th>
+                <th className="px-6 py-3 text-center">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {payroll.map((employee, index) => (
+                <tr
+                  key={employee.id}
+                  className={`${
+                    index % 2 === 0 ? "bg-[#2E3A47]" : "bg-[#3A4A57]"
+                  } border-b border-gray-600`}
+                >
+                  <td className="px-6 py-4 font-medium text-gray-100">
+                    {employee.id}
+                  </td>
+                  <td className="px-6 py-4">{employee.name}</td>
+                  <td className="px-6 py-4">{employee.position}</td>
+                  <td className="px-6 py-4">${employee.salary.toFixed(2)}</td>
+                  <td className="px-6 py-4">${employee.bonus.toFixed(2)}</td>
+                  <td className="px-6 py-4">
+                    ${employee.deductions.toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 font-bold">
+                    ${employee.netPay.toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 text-center flex justify-center gap-4">
+                    <button
+                      title="Download Receipt"
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      <FaDownload />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>  
   );
 };
 

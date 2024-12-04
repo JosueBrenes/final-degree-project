@@ -14,7 +14,8 @@ const ForgotPassword = () => {
           />
           <h1 className="text-2xl font-bold text-white">Forgot Password?</h1>
           <p className="text-gray-400 text-sm">
-            Enter your email address below and we'll send you instructions to reset your password.
+            Enter your email address below and we'll send you instructions to
+            reset your password.
           </p>
         </div>
         <form className="space-y-4">
