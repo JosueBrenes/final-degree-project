@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Arce y Vargas",
+  title: "Dashboard",
   description: "Mantenimiento Industrial",
 };
 
