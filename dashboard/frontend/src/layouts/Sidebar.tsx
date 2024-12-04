@@ -13,6 +13,7 @@ import {
   FaChartLine,
   FaCalendarCheck,
   FaSmile,
+  FaUmbrellaBeach,
 } from "react-icons/fa";
 
 const Sidebar: React.FC = () => {
@@ -24,7 +25,7 @@ const Sidebar: React.FC = () => {
 
   return (
     <>
-      <header className="sm:hidden fixed top-0 left-0 z-50 w-full bg-[#232F3E] ">
+      <header className="sm:hidden fixed top-0 left-0 z-50 w-full bg-[#232F3E]">
         <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={toggleSidebar}
@@ -145,6 +146,15 @@ const Sidebar: React.FC = () => {
               >
                 <FaSmile className="w-5 h-5" />
                 <span className="ms-3">Satisfaction</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/admin/vacations"
+                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700"
+              >
+                <FaUmbrellaBeach className="w-5 h-5" />
+                <span className="ms-3">Vacations</span>
               </a>
             </li>
           </ul>
