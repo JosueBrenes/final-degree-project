@@ -1,56 +1,94 @@
 "use client";
 
-import { FaEnvelope } from "react-icons/fa";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 
-const ForgotPassword = () => {
+export function ForgotPassword() {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess(false);
+    console.log("Password reset requested for:", email);
+    setSuccess(true);
+  };
+
   return (
-    <div className="min-h-screen bg-[#232F3E] flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-[#2E3A47] rounded-lg shadow-lg p-6 space-y-6">
-        <div className="text-center">
-          <img
-            src="/img/logo_2.png"
-            alt="Company Logo"
-            className="w-24 h-24 mx-auto mb-4"
-          />
-          <h1 className="text-2xl font-bold text-white">Forgot Password?</h1>
-          <p className="text-gray-400 text-sm">
-            Enter your email address below and we'll send you instructions to
-            reset your password.
-          </p>
-        </div>
-        <form className="space-y-4">
-          <div className="relative">
-            <label htmlFor="email" className="text-gray-300 text-sm">
-              Email Address
-            </label>
-            <div className="flex items-center border border-gray-600 bg-gray-700 rounded-lg mt-1">
-              <FaEnvelope className="text-gray-400 mx-3" />
-              <input
-                type="email"
+    <Card className="w-full max-w-md mx-auto bg-white dark:bg-background overflow-hidden">
+      <CardHeader>
+        <CardTitle className="text-gray-900 dark:text-gray-100">
+          Reset Password
+        </CardTitle>
+        <CardDescription className="text-gray-600 dark:text-gray-400">
+          Enter your email address to receive reset instructions
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {success ? (
+          <Alert className="mb-4 bg-green-100 dark:bg-green-800 text-green-600 dark:text-green-200">
+            <CheckCircle2 className="h-4 w-4" />
+            <AlertDescription>
+              Reset instructions have been sent to your email address.
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label
+                htmlFor="email"
+                className="text-gray-700 dark:text-gray-300"
+              >
+                Email Address
+              </Label>
+              <Input
                 id="email"
-                placeholder="Enter your email"
-                className="w-full bg-transparent text-white placeholder-gray-400 p-2 outline-none"
+                type="email"
+                placeholder="email@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="bg-white dark:bg-[#18181B] text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700"
               />
             </div>
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm py-2 rounded-lg"
-          >
-            Send Reset Link
-          </button>
-        </form>
-        <div className="text-center">
-          <p className="text-sm text-gray-400">
-            Remembered your password?{" "}
-            <a href="/" className="text-blue-500 hover:underline">
-              Go back to login
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
+            {error && (
+              <Alert
+                variant="destructive"
+                className="bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-200"
+              >
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            <Button
+              type="submit"
+              className="w-full text-white bg-gradient-to-br from-blue-600 to-blue-800 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-200 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+            >
+              Send Instructions
+            </Button>
+          </form>
+        )}
+      </CardContent>
+      <CardFooter className="flex justify-center">
+        <Link className="text-gray-700 dark:text-gray-300" href="/auth/login">
+          Back to login
+        </Link>
+      </CardFooter>
+    </Card>
   );
-};
-
-export default ForgotPassword;
+}

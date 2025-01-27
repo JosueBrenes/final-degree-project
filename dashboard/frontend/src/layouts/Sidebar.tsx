@@ -1,167 +1,155 @@
-"use client";
-
-import React, { useState } from "react";
 import {
-  FaBars,
-  FaHome,
-  FaUsers,
-  FaFileInvoice,
-  FaUserTie,
-  FaWarehouse,
-  FaClipboardList,
-  FaMoneyCheckAlt,
-  FaChartLine,
-  FaCalendarCheck,
-  FaSmile,
-  FaUmbrellaBeach,
-} from "react-icons/fa";
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarFooter,
+} from "@/components/ui/sidebar";
+import {
+  Home,
+  FileText,
+  User,
+  Warehouse,
+  ClipboardList,
+  BarChart2,
+  Smile,
+  Umbrella,
+} from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
-const Sidebar: React.FC = () => {
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!isSidebarOpen);
-  };
-
+export function DashboardSidebar() {
   return (
-    <>
-      <header className="sm:hidden fixed top-0 left-0 z-50 w-full bg-[#232F3E]">
-        <div className="flex items-center justify-between px-4 py-3">
-          <button
-            onClick={toggleSidebar}
-            type="button"
-            className="inline-flex items-center p-2 text-sm text-gray-300 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200"
-          >
-            <FaBars className="w-6 h-6" />
-            <span className="sr-only">Open sidebar</span>
-          </button>
-          <img src="/img/logo_2.png" alt="Logo" className="h-14 w-auto" />
-        </div>
-      </header>
-
-      <aside
-        id="logo-sidebar"
-        className={`fixed top-0 left-0 z-40 w-64 h-full overflow-y-auto transition-transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } sm:translate-x-0 bg-[#232F3E]`}
-        aria-label="Sidebar"
-      >
-        <div className="h-full px-3 py-4">
-          <a href="/admin" className="flex items-center ps-2.5 mb-5">
-            <img
-              src="/img/logo_2.png"
-              className="h-14 me-3 sm:h-14"
-              alt="Flowbite Logo"
-            />
-            <span className="self-center text-xl font-semibold whitespace-nowrap text-white">
-              Arce & Vargas
-            </span>
-          </a>
-          <ul className="space-y-2 font-medium">
-            <li>
-              <a
-                href="/admin"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700"
-              >
-                <FaHome className="w-5 h-5" />
-                <span className="ms-3">Dashboard</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="/admin/quotes"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700"
-              >
-                <FaFileInvoice className="w-5 h-5" />
-                <span className="ms-3">Quotes</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="/admin/recruitment"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700"
-              >
-                <FaUserTie className="w-5 h-5" />
-                <span className="ms-3">Recruitment</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="/admin/inventory"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700"
-              >
-                <FaWarehouse className="w-5 h-5" />
-                <span className="ms-3">Inventory</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="/admin/employees"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700"
-              >
-                <FaUsers className="w-5 h-5" />
-                <span className="ms-3">Employees</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="/admin/accounting"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700"
-              >
-                <FaMoneyCheckAlt className="w-5 h-5" />
-                <span className="ms-3">Accounting</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="/admin/logs"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700"
-              >
-                <FaClipboardList className="w-5 h-5" />
-                <span className="ms-3">Logs</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="/admin/reports"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700"
-              >
-                <FaChartLine className="w-5 h-5" />
-                <span className="ms-3">Reports</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="/admin/payroll"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700"
-              >
-                <FaFileInvoice className="w-5 h-5" />
-                <span className="ms-3">Payroll</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="/admin/satisfaction"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700"
-              >
-                <FaSmile className="w-5 h-5" />
-                <span className="ms-3">Satisfaction</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="/admin/vacations"
-                className="flex items-center p-2 rounded-lg text-white hover:bg-gray-700"
-              >
-                <FaUmbrellaBeach className="w-5 h-5" />
-                <span className="ms-3">Vacations</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </aside>
-    </>
+    <Sidebar>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg">
+              <div className="flex items-center gap-2">
+                <Image
+                  src="/img/logo_2.png"
+                  alt="Logo"
+                  width={24}
+                  height={24}
+                  priority
+                />
+                <span className="font-semibold">Arce & Vargas</span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard">
+                    <Home className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/quotes">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Quotes
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/recruitment">
+                    <User className="mr-2 h-4 w-4" />
+                    Recruitment
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/inventory">
+                    <Warehouse className="mr-2 h-4 w-4" />
+                    Inventory
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/employees">
+                    <User className="mr-2 h-4 w-4" />
+                    Employees
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/accounting">
+                    <BarChart2 className="mr-2 h-4 w-4" />
+                    Accounting
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/logs">
+                    <ClipboardList className="mr-2 h-4 w-4" />
+                    Logs
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/reports">
+                    <BarChart2 className="mr-2 h-4 w-4" />
+                    Reports
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/payroll">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Payroll
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/satisfaction">
+                    <Smile className="mr-2 h-4 w-4" />
+                    Satisfaction
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/vacations">
+                    <Umbrella className="mr-2 h-4 w-4" />
+                    Vacations
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg">
+              <span className="text-sm font-medium">John Doe</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+    </Sidebar>
   );
-};
-
-export default Sidebar;
+}
