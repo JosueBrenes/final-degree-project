@@ -144,9 +144,11 @@ export function DashboardSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg">
-              <span className="text-sm font-medium">John Doe</span>
-            </SidebarMenuButton>
+            <Link href="/dashboard/profile">
+              <SidebarMenuButton size="lg" asChild>
+                <span className="text-sm font-medium">John Doe</span>
+              </SidebarMenuButton>
+            </Link>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

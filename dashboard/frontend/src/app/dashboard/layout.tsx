@@ -19,9 +19,7 @@ export default function RootLayout({
             <DashboardSidebar />
             <SidebarInset className="flex flex-col w-full">
               <DashboardHeader />
-              <main className="flex-1 p-1 md:p-8 pt-6 space-y-4">
-                {children}
-              </main>
+              <main className="flex-1 p-1 md:p-8  space-y-4">{children}</main>
               <DashboardFooter />
             </SidebarInset>
           </div>
