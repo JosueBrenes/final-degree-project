@@ -31,6 +31,9 @@ import EmployeesModal from "./EmployeesModal";
 import ApprovalDialog from "./ApprovalDialog";
 import SalaryManagementModal from "./SalaryManagementModal";
 import PerformanceReportModal from "./PerformanceReportModal";
+import AttendanceLog from "./AttendanceLog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ClipboardList } from "lucide-react";
 
 const initialEmployees = [
   {
@@ -181,6 +184,7 @@ export default function EmployeesTable() {
   const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
   const [isSalaryModalOpen, setIsSalaryModalOpen] = useState(false);
   const [isPerformanceReportOpen, setIsPerformanceReportOpen] = useState(false);
+  const [isAttendanceLogOpen, setIsAttendanceLogOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedTeam, setSelectedTeam] = useState(null);
   const router = useRouter();
@@ -228,10 +232,13 @@ export default function EmployeesTable() {
           <Button onClick={() => setIsApprovalDialogOpen(true)}>
             <Bell className="mr-2 h-4 w-4" /> Approval Requests
           </Button>
-          <Button onClick={() => router.push("/admin/employees/vacations")}>
+          <Button onClick={() => router.push("/admin/employees/vacations")}> 
             <Plane className="mr-2 h-4 w-4" /> Vacations
           </Button>
-          <Button onClick={() => handleTeamPerformanceReportClick("All")}>
+          <Button onClick={() => setIsAttendanceLogOpen(true)} className="border border-red-500">
+            <ClipboardList className="mr-2 h-4 w-4" /> Attendance Log
+          </Button>
+          <Button onClick={() => handleTeamPerformanceReportClick("All")}> 
             <BarChart className="mr-2 h-4 w-4" /> Team Performance
           </Button>
         </div>
@@ -307,6 +314,14 @@ export default function EmployeesTable() {
         employee={selectedEmployee}
         team={selectedTeam}
       />
+      <Dialog open={isAttendanceLogOpen} onOpenChange={setIsAttendanceLogOpen}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle>Attendance Log</DialogTitle>
+          </DialogHeader>
+          <AttendanceLog />
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
