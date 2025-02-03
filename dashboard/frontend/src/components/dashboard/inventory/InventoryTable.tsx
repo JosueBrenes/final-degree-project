@@ -43,6 +43,8 @@ import ConfigureAlertModal from "./ConfigureAlertModal";
 import LowStockReportModal from "./LowStockReportModal";
 import InventoryMovementModal from "./InventoryMovementModal";
 import InventoryRotationReport from "./InventoryRotationReport";
+import CategoryModal from "./CategoryModal";
+import EditProductModal from "./EditProductModal";
 
 const inventoryItems = [
   {
@@ -157,10 +159,17 @@ export default function InventoryTable() {
     useState(false);
   const [movementType, setMovementType] = useState<string | null>(null);
   const [isRotationReportOpen, setIsRotationReportOpen] = useState(false);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [categories, setCategories] = useState<string[]>([
+    "Consumables",
+    "Machinery",
+    "Safety Equipment",
+    "Tools",
+    "Machinery Parts",
+  ]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const { toast } = useToast();
-
-  const categories = [...new Set(inventory.map((item) => item.category))];
 
   const toggleCategory = (category: string) => {
     setExpandedCategories((prev) => ({
@@ -245,6 +254,44 @@ export default function InventoryTable() {
     });
   }, [inventory, toast]);
 
+  const addCategory = (categoryName: string, description: string) => {
+    setCategories((prevCategories) => [...prevCategories, categoryName]);
+    toast({
+      title: "Category Added",
+      description: `New category "${categoryName}" has been added.`,
+    });
+  };
+
+  const assignProductToCategory = (productId: string, newCategory: string) => {
+    setInventory((prevInventory) =>
+      prevInventory.map((item) =>
+        item.id === productId ? { ...item, category: newCategory } : item
+      )
+    );
+    toast({
+      title: "Product Categorized",
+      description: `Product has been assigned to the "${newCategory}" category.`,
+    });
+  };
+
+  const handleEditClick = (product: InventoryItem) => {
+    setSelectedProduct(product);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditProduct = (editedProduct: InventoryItem) => {
+    setInventory((prevInventory) =>
+      prevInventory.map((item) =>
+        item.id === editedProduct.id ? editedProduct : item
+      )
+    );
+    setIsEditModalOpen(false);
+    toast({
+      title: "Product Updated",
+      description: `${editedProduct.name} has been updated successfully.`,
+    });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -278,6 +325,9 @@ export default function InventoryTable() {
             >
               <AlertTriangle className="mr-2 h-4 w-4" />
               Low Stock Report
+            </Button>
+            <Button onClick={() => setIsCategoryModalOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" /> Add Category
             </Button>
           </div>
           <Button onClick={() => setIsModalOpen(true)}>
@@ -324,11 +374,7 @@ export default function InventoryTable() {
                   ? expandedCategories[category]
                   : true) &&
                   (items as InventoryItem[]).map((item) => (
-                    <TableRow
-                      key={item.id}
-                      className="cursor-pointer"
-                      onClick={() => handleProductClick(item)}
-                    >
+                    <TableRow key={item.id}>
                       <TableCell className="font-medium">{item.id}</TableCell>
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.category}</TableCell>
@@ -350,26 +396,22 @@ export default function InventoryTable() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="mr-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleHistoryClick(item);
-                          }}
+                          onClick={() => handleHistoryClick(item)}
                         >
                           <ChevronRight className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="mr-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleConfigureAlert(item);
-                          }}
+                          onClick={() => handleConfigureAlert(item)}
                         >
                           <AlertTriangle className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="mr-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditClick(item)}
+                        >
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button variant="ghost" size="icon">
@@ -378,29 +420,16 @@ export default function InventoryTable() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="mr-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleInventoryMovement(item, "in");
-                          }}
+                          onClick={() => handleInventoryMovement(item, "in")}
                         >
                           <ArrowUpCircle className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="mr-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleInventoryMovement(item, "out");
-                          }}
+                          onClick={() => handleInventoryMovement(item, "out")}
                         >
                           <ArrowDownCircle className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          onClick={() => setIsRotationReportOpen(true)}>
-                          Generate Rotation Report
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -418,6 +447,8 @@ export default function InventoryTable() {
         isOpen={isProductDetailsModalOpen}
         onClose={() => setIsProductDetailsModalOpen(false)}
         product={selectedProduct}
+        categories={categories}
+        onAssignCategory={assignProductToCategory}
       />
       <HistoryModal
         isOpen={isHistoryModalOpen}
@@ -446,6 +477,18 @@ export default function InventoryTable() {
         isOpen={isRotationReportOpen}
         onClose={() => setIsRotationReportOpen(false)}
         inventory={inventory}
+      />
+      <CategoryModal
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        onAddCategory={addCategory}
+      />
+      <EditProductModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        product={selectedProduct}
+        onEditProduct={handleEditProduct}
+        categories={categories}
       />
     </Card>
   );

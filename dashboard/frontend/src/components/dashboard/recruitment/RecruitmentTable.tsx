@@ -1,229 +1,269 @@
 "use client";
 
-import React, { useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import InterviewScheduler, { Interview } from "@/components/dashboard/recruitment/InterviewScheduler";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
+import * as XLSX from "xlsx";
 
-export default function RecruitmentTable() {
-  const [vacancies] = useState([
-    { 
-      id: "VAC-001", 
-      title: "Software Engineer", 
-      department: "IT", 
-      status: "Active", 
-      publishDate: "2023-12-10" 
-    },
-    { 
-      id: "VAC-002", 
-      title: "HR Manager", 
-      department: "Human Resources", 
-      status: "Scheduled", publishDate: "2023-12-15" },
-    { 
-      id: "VAC-003", 
-      title: "Marketing Specialist", 
-      department: "Marketing", 
-      status: "Draft", 
-      publishDate: null },
-  ]);
+interface Candidate {
+  id: string;
+  name: string;
+  position: string;
+  score: number;
+  experience: number;
+  education: string;
+}
 
-  const [applications, setApplications] = useState([
-    { 
-      id: "APP-001", 
-      applicant: "John Doe", 
-      position: "Software Engineer", 
-      vacancyId: "VAC-001", 
-      status: "Pending", 
-      appliedDate: "2023-12-05" 
-    },
-    { 
-      id: "APP-002", 
-      applicant: "Jane Smith", 
-      position: "HR Manager", 
-      vacancyId: "VAC-002", 
-      status: "Accepted", 
-      appliedDate: "2023-12-07" 
-    },
-    { id: "APP-003", 
-      applicant: "David Brown", 
-      position: "Marketing Specialist", 
-      vacancyId: "VAC-003", 
-      status: "Rejected", 
-      appliedDate: "2023-12-09" 
-    },
-  ]);
+const mockCandidates: Candidate[] = [
+  {
+    id: "C001",
+    name: "John Doe",
+    position: "Software Engineer",
+    score: 85,
+    experience: 5,
+    education: "Bachelor's",
+  },
+  {
+    id: "C002",
+    name: "Jane Smith",
+    position: "HR Manager",
+    score: 92,
+    experience: 8,
+    education: "Master's",
+  },
+  {
+    id: "C003",
+    name: "Mike Johnson",
+    position: "Marketing Specialist",
+    score: 78,
+    experience: 3,
+    education: "Bachelor's",
+  },
+  {
+    id: "C004",
+    name: "Emily Brown",
+    position: "Software Engineer",
+    score: 88,
+    experience: 6,
+    education: "Master's",
+  },
+  {
+    id: "C005",
+    name: "David Lee",
+    position: "HR Manager",
+    score: 90,
+    experience: 7,
+    education: "Bachelor's",
+  },
+];
 
-  const [interviews, setInterviews] = useState<Interview[]>([]);
-  const [showInterviewForm, setShowInterviewForm] = useState(false);
-  const [selectedApplication, setSelectedApplication] = useState<typeof applications[0] | null>(null);
+export default function RecruitmentReport() {
+  const [candidates] = useState<Candidate[]>(mockCandidates);
+  const [filteredCandidates, setFilteredCandidates] =
+    useState<Candidate[]>(mockCandidates);
+  const [minScore, setMinScore] = useState<number>(0);
+  const [selectedPosition, setSelectedPosition] = useState<string>("All");
+  const [minExperience, setMinExperience] = useState<number>(0);
+  const [selectedEducation, setSelectedEducation] = useState<string>("All");
 
-  const handleInterviewScheduled = (newInterview: Interview) => {
-    setInterviews(prev => [...prev, newInterview]);
-    console.log("Entrevista agendada:", newInterview);
+  const applyFilters = () => {
+    setFilteredCandidates(
+      candidates.filter(
+        (candidate) =>
+          candidate.score >= minScore &&
+          (selectedPosition === "All" ||
+            candidate.position === selectedPosition) &&
+          candidate.experience >= minExperience &&
+          (selectedEducation === "All" ||
+            candidate.education === selectedEducation)
+      )
+    );
   };
 
-  const handleInterviewSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Recruitment Report", 14, 15);
+    doc.autoTable({
+      head: [["ID", "Name", "Position", "Score", "Experience", "Education"]],
+      body: filteredCandidates.map((c) => [
+        c.id,
+        c.name,
+        c.position,
+        c.score,
+        c.experience,
+        c.education,
+      ]),
+    });
+    doc.save("recruitment-report.pdf");
+  };
 
-    if (!selectedApplication) return;
-
-    const newInterview: Interview = {
-      id: `INT-${interviews.length + 1}`,
-      applicationId: selectedApplication.id,
-      dateTime: (formData.get("datetime") as string) || "",
-      interviewer: (formData.get("interviewer") as string) || "",
-      location: (formData.get("location") as string) || "",
-      status: "Scheduled",
-    };
-
-    setInterviews([...interviews, newInterview]);
-    setShowInterviewForm(false);
+  const exportToExcel = () => {
+    const header = [
+      "ID",
+      "Name",
+      "Position",
+      "Score",
+      "Experience",
+      "Education",
+    ];
+    const data = filteredCandidates.map((c) => [
+      c.id,
+      c.name,
+      c.position,
+      c.score,
+      c.experience,
+      c.education,
+    ]);
+    const ws = XLSX.utils.aoa_to_sheet([header, ...data]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Candidates");
+    XLSX.writeFile(wb, "recruitment-report.xlsx");
   };
 
   return (
-    <div className="space-y-6">
-      {/* Vacancies Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Vacancies</CardTitle>
-          <CardDescription>Manage job postings, including creating and updating vacancies.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Department</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Publish Date</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {vacancies.map((vacancy) => (
-                <TableRow key={vacancy.id}>
-                  <TableCell>{vacancy.id}</TableCell>
-                  <TableCell>{vacancy.title}</TableCell>
-                  <TableCell>{vacancy.department}</TableCell>
-                  <TableCell>{vacancy.status}</TableCell>
-                  <TableCell>{vacancy.publishDate || "Not Scheduled"}</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" className="mr-2">
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* Applications Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Applications</CardTitle>
-          <CardDescription>Review and manage applications submitted for job postings.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Application ID</TableHead>
-                <TableHead>Applicant</TableHead>
-                <TableHead>Position</TableHead>
-                <TableHead>Vacancy ID</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Applied Date</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {applications.map((app) => (
-                <TableRow key={app.id}>
-                  <TableCell>{app.id}</TableCell>
-                  <TableCell>{app.applicant}</TableCell>
-                  <TableCell>{app.position}</TableCell>
-                  <TableCell>{app.vacancyId}</TableCell>
-                  <TableCell>
-                    <select
-                      value={app.status}
-                      onChange={(e) =>
-                        setApplications(applications.map(a =>
-                          a.id === app.id ? { ...a, status: e.target.value } : a
-                        ))
-                      }
-                      className="bg-transparent border rounded px-2 py-1"
-                    >
-                      <option value="Pending">Pending</option>
-                      <option value="Accepted">Accepted</option>
-                      <option value="Rejected">Rejected</option>
-                    </select>
-                  </TableCell>
-                  <TableCell>{app.appliedDate}</TableCell>
-                  <TableCell>
-                    {app.status === "Accepted" && (
-                      <Button onClick={() => {
-                        setSelectedApplication(app);
-                        setShowInterviewForm(true);
-                      }}>
-                        Schedule Interview
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* Scheduled Interviews Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Scheduled Interviews</CardTitle>
-          <CardDescription>View and manage upcoming interviews with candidates.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <InterviewScheduler
-            applications={applications}
-            scheduledInterviews={interviews}
-            onInterviewScheduled={handleInterviewScheduled}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Interview Scheduling Form */}
-      {showInterviewForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle>Schedule Interview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleInterviewSubmit} className="space-y-4">
-                <Input value={selectedApplication?.applicant} disabled />
-                <Input value={selectedApplication?.position} disabled />
-                <Input type="datetime-local" name="datetime" required />
-                <Input type="text" name="interviewer" required />
-                <Input type="text" name="location" required />
-                <div className="flex gap-2 justify-end">
-                  <Button type="button" variant="outline" onClick={() => setShowInterviewForm(false)}>Cancel</Button>
-                  <Button type="submit">Schedule</Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+    <Card>
+      <CardHeader>
+        <CardTitle>Recruitment Report</CardTitle>
+        <CardDescription>
+          Generate and export reports on candidate performance.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-wrap gap-4 mb-4">
+          <div>
+            <label
+              htmlFor="minScore"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Minimum Score
+            </label>
+            <Input
+              id="minScore"
+              type="number"
+              value={minScore}
+              onChange={(e) => setMinScore(Number(e.target.value))}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="position"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Position
+            </label>
+            <Select
+              value={selectedPosition}
+              onValueChange={setSelectedPosition}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select position" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Positions</SelectItem>
+                <SelectItem value="Software Engineer">
+                  Software Engineer
+                </SelectItem>
+                <SelectItem value="HR Manager">HR Manager</SelectItem>
+                <SelectItem value="Marketing Specialist">
+                  Marketing Specialist
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label
+              htmlFor="minExperience"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Minimum Experience (years)
+            </label>
+            <Input
+              id="minExperience"
+              type="number"
+              value={minExperience}
+              onChange={(e) => setMinExperience(Number(e.target.value))}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="education"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Education
+            </label>
+            <Select
+              value={selectedEducation}
+              onValueChange={setSelectedEducation}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select education" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Education Levels</SelectItem>
+                <SelectItem value="Bachelor's">Bachelor's</SelectItem>
+                <SelectItem value="Master's">Master's</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-      )}
-    </div>
+        <Button onClick={applyFilters} className="mb-4">
+          Apply Filters
+        </Button>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Position</TableHead>
+              <TableHead>Score</TableHead>
+              <TableHead>Experience</TableHead>
+              <TableHead>Education</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredCandidates.map((candidate) => (
+              <TableRow key={candidate.id}>
+                <TableCell>{candidate.id}</TableCell>
+                <TableCell>{candidate.name}</TableCell>
+                <TableCell>{candidate.position}</TableCell>
+                <TableCell>{candidate.score}</TableCell>
+                <TableCell>{candidate.experience} years</TableCell>
+                <TableCell>{candidate.education}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <div className="mt-4 space-x-2">
+          <Button onClick={exportToPDF}>Export to PDF</Button>
+          <Button onClick={exportToExcel}>Export to Excel</Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
