@@ -74,6 +74,7 @@ export default function RecruitmentTable() {
       experience: 5,
       educationLevel: "Bachelor",
       location: "New York",
+      scores: { technical: 0, communication: 0, problemSolving: 0, total: 0 },
     },
     {
       id: "APP-002",
@@ -85,6 +86,7 @@ export default function RecruitmentTable() {
       experience: 8,
       educationLevel: "Master",
       location: "Chicago",
+      scores: { technical: 0, communication: 0, problemSolving: 0, total: 0 },
     },
     {
       id: "APP-003",
@@ -96,6 +98,7 @@ export default function RecruitmentTable() {
       experience: 3,
       educationLevel: "Bachelor",
       location: "Los Angeles",
+      scores: { technical: 0, communication: 0, problemSolving: 0, total: 0 },
     },
     {
       id: "APP-004",
@@ -107,6 +110,7 @@ export default function RecruitmentTable() {
       experience: 2,
       educationLevel: "Associate",
       location: "San Francisco",
+      scores: { technical: 0, communication: 0, problemSolving: 0, total: 0 },
     },
     {
       id: "APP-005",
@@ -118,6 +122,7 @@ export default function RecruitmentTable() {
       experience: 6,
       educationLevel: "Bachelor",
       location: "Boston",
+      scores: { technical: 0, communication: 0, problemSolving: 0, total: 0 },
     },
   ]);
 
@@ -131,6 +136,14 @@ export default function RecruitmentTable() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+  const [isEvaluationDialogOpen, setIsEvaluationDialogOpen] = useState(false);
+  const [selectedApplication, setSelectedApplication] = useState(null);
+  const [evaluationScores, setEvaluationScores] = useState({
+    technical: 0,
+    communication: 0,
+    problemSolving: 0,
+    total: 0,
+  });
 
   const [errors, setErrors] = useState({});
 
@@ -321,6 +334,29 @@ export default function RecruitmentTable() {
     });
   };
 
+  const handleScoreChange = (criteria, value) => {
+    const updatedScores = {
+      ...evaluationScores,
+      [criteria]: Number(value),
+    };
+    updatedScores.total = updatedScores.technical + updatedScores.communication + updatedScores.problemSolving;
+  
+    setEvaluationScores(updatedScores);
+  };
+
+  const handleSaveEvaluation = () => {
+    setApplications((prevApplications) =>
+      prevApplications.map((app) =>
+        app.id === selectedApplication.id
+          ? { ...app, scores: evaluationScores }
+          : app
+      )
+    );
+    setIsEvaluationDialogOpen(false);
+  };
+
+  const sortedApplications = [...applications].sort((a, b) => b.scores.total - a.scores.total);
+
   return (
     <div className="space-y-6">
       <Card>
@@ -407,6 +443,11 @@ export default function RecruitmentTable() {
                       onClick={() => handleDelete(vacancy.id)}
                     >
                       <Trash2 className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleEvaluateCandidate(app)}>
+                      Evaluar
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -612,6 +653,49 @@ export default function RecruitmentTable() {
             >
               Clear All
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEvaluationDialogOpen} onOpenChange={setIsEvaluationDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Evaluar Candidato</DialogTitle>
+          </DialogHeader>
+          {selectedApplication && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label>Habilidad Técnica</Label>
+                <Input
+                  type="number"
+                  value={evaluationScores.technical}
+                  onChange={(e) => handleScoreChange("technical", e.target.value)}
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label>Comunicación</Label>
+                <Input
+                  type="number"
+                  value={evaluationScores.communication}
+                  onChange={(e) => handleScoreChange("communication", e.target.value)}
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label>Resolución de Problemas</Label>
+                <Input
+                  type="number"
+                  value={evaluationScores.problemSolving}
+                  onChange={(e) => handleScoreChange("problemSolving", e.target.value)}
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label>Total</Label>
+                <p>{evaluationScores.total}</p>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button onClick={handleSaveEvaluation}>Guardar Evaluación</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
