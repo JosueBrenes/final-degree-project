@@ -83,6 +83,29 @@ export default function RecruitmentTable() {
     setShowInterviewForm(false);
   };
 
+  const handleScoreChange = (criteria, value) => {
+    const updatedScores = {
+      ...evaluationScores,
+      [criteria]: Number(value),
+    };
+    updatedScores.total = updatedScores.technical + updatedScores.communication + updatedScores.problemSolving;
+  
+    setEvaluationScores(updatedScores);
+  };
+
+  const handleSaveEvaluation = () => {
+    setApplications((prevApplications) =>
+      prevApplications.map((app) =>
+        app.id === selectedApplication.id
+          ? { ...app, scores: evaluationScores }
+          : app
+      )
+    );
+    setIsEvaluationDialogOpen(false);
+  };
+
+  const sortedApplications = [...applications].sort((a, b) => b.scores.total - a.scores.total);
+
   return (
     <div className="space-y-6">
       {/* Vacancies Table */}
@@ -117,6 +140,11 @@ export default function RecruitmentTable() {
                     </Button>
                     <Button variant="ghost" size="icon">
                       <Trash2 className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleEvaluateCandidate(app)}>
+                      Evaluar
                     </Button>
                   </TableCell>
                 </TableRow>

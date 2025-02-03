@@ -42,6 +42,7 @@ import HistoryModal from "./HistoryModal";
 import ConfigureAlertModal from "./ConfigureAlertModal";
 import LowStockReportModal from "./LowStockReportModal";
 import InventoryMovementModal from "./InventoryMovementModal";
+import InventoryRotationReport from "./InventoryRotationReport";
 
 const inventoryItems = [
   {
@@ -53,6 +54,10 @@ const inventoryItems = [
     supplier: "Supplier A",
     lastUpdated: "2023-11-01",
     minStockLevel: 30,
+    movements: [
+      { date: "2024-01-10", type: "in", quantity: 20 },
+      { date: "2024-01-15", type: "out", quantity: 10 },
+    ],
   },
   {
     id: "ITM-002",
@@ -63,6 +68,10 @@ const inventoryItems = [
     supplier: "Supplier B",
     lastUpdated: "2023-11-05",
     minStockLevel: 15,
+    movements: [
+      { date: "2024-01-10", type: "in", quantity: 20 },
+      { date: "2024-01-15", type: "out", quantity: 10 },
+    ],
   },
   {
     id: "ITM-003",
@@ -73,6 +82,10 @@ const inventoryItems = [
     supplier: "Supplier C",
     lastUpdated: "2023-11-07",
     minStockLevel: 50,
+    movements: [
+      { date: "2024-01-10", type: "in", quantity: 20 },
+      { date: "2024-01-15", type: "out", quantity: 10 },
+    ],
   },
   {
     id: "ITM-004",
@@ -83,6 +96,10 @@ const inventoryItems = [
     supplier: "Supplier D",
     lastUpdated: "2023-11-08",
     minStockLevel: 20,
+    movements: [
+      { date: "2024-01-10", type: "in", quantity: 20 },
+      { date: "2024-01-15", type: "out", quantity: 10 },
+    ],
   },
   {
     id: "ITM-005",
@@ -93,6 +110,10 @@ const inventoryItems = [
     supplier: "Supplier E",
     lastUpdated: "2023-11-10",
     minStockLevel: 25,
+    movements: [
+      { date: "2024-01-10", type: "in", quantity: 20 },
+      { date: "2024-01-15", type: "out", quantity: 10 },
+    ],
   },
 ];
 
@@ -105,6 +126,7 @@ interface InventoryItem {
   supplier: string;
   lastUpdated: string;
   minStockLevel: number;
+  movements: { date: string; type: "in" | "out"; quantity: number }[];
 }
 
 interface ExpandedCategories {
@@ -134,6 +156,7 @@ export default function InventoryTable() {
   const [isInventoryMovementModalOpen, setIsInventoryMovementModalOpen] =
     useState(false);
   const [movementType, setMovementType] = useState<string | null>(null);
+  const [isRotationReportOpen, setIsRotationReportOpen] = useState(false);
 
   const { toast } = useToast();
 
@@ -374,6 +397,11 @@ export default function InventoryTable() {
                         >
                           <ArrowDownCircle className="h-4 w-4" />
                         </Button>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setIsRotationReportOpen(true)}>
+                          Generate Rotation Report
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -413,6 +441,11 @@ export default function InventoryTable() {
         product={selectedProduct}
         type={movementType}
         onUpdateInventory={updateInventory}
+      />
+      <InventoryRotationReport
+        isOpen={isRotationReportOpen}
+        onClose={() => setIsRotationReportOpen(false)}
+        inventory={inventory}
       />
     </Card>
   );
