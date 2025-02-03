@@ -157,7 +157,7 @@ export default function RecruitmentReport() {
           <div>
             <label
               htmlFor="minScore"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-white"
             >
               Minimum Score
             </label>
@@ -172,7 +172,7 @@ export default function RecruitmentReport() {
           <div>
             <label
               htmlFor="position"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-white"
             >
               Position
             </label>
@@ -198,7 +198,7 @@ export default function RecruitmentReport() {
           <div>
             <label
               htmlFor="minExperience"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-white"
             >
               Minimum Experience (years)
             </label>
@@ -213,7 +213,7 @@ export default function RecruitmentReport() {
           <div>
             <label
               htmlFor="education"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-white"
             >
               Education
             </label>
