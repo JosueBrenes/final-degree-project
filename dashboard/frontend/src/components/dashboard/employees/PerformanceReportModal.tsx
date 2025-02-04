@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+"use client";
+
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -49,16 +51,82 @@ export default function PerformanceReportModal({
 }: PerformanceReportModalProps) {
   const [isExporting, setIsExporting] = useState(false);
 
-  const handleExport = (format: "pdf" | "excel") => {
+  const exportToCSV = () => {
     setIsExporting(true);
-    // Simulate export process
-    setTimeout(() => {
-      console.log(
-        `Exporting ${team ? "team" : "individual"} report in ${format} format`
+    const data = employee ? mockPerformanceData : mockTeamPerformanceData;
+    const headers = Object.keys(data[0]).join(",");
+    const csvContent = [
+      headers,
+      ...data.map((row) => Object.values(row).join(",")),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute(
+        "download",
+        `${employee ? "Individual" : "Team"}_Performance_Report.csv`
       );
-      setIsExporting(false);
-      onClose();
-    }, 2000);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    setIsExporting(false);
+  };
+
+  const exportToPDF = () => {
+    setIsExporting(true);
+    const data = employee ? mockPerformanceData : mockTeamPerformanceData;
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    const tbody = document.createElement("tbody");
+
+    // Create header
+    const headerRow = document.createElement("tr");
+    Object.keys(data[0]).forEach((key) => {
+      const th = document.createElement("th");
+      th.textContent = key;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+
+    // Create body
+    data.forEach((row) => {
+      const tr = document.createElement("tr");
+      Object.values(row).forEach((value) => {
+        const td = document.createElement("td");
+        td.textContent = String(value);
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+
+    const style = document.createElement("style");
+    style.textContent = `
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid black; padding: 8px; text-align: left; }
+      th { background-color: #f2f2f2; }
+    `;
+
+    const win = window.open("", "_blank");
+    win!.document.write(
+      "<html><head><title>Performance Report</title></head><body>"
+    );
+    win!.document.write(
+      `<h1>${employee ? "Individual" : "Team"} Performance Report</h1>`
+    );
+    win!.document.head.appendChild(style);
+    win!.document.body.appendChild(table);
+    win!.document.write("</body></html>");
+    win!.document.close();
+    win!.print();
+    setIsExporting(false);
   };
 
   const renderIndividualReport = () => (
@@ -111,11 +179,11 @@ export default function PerformanceReportModal({
         </DialogHeader>
         {employee ? renderIndividualReport() : renderTeamReport()}
         <DialogFooter>
-          <Button onClick={() => handleExport("pdf")} disabled={isExporting}>
+          <Button onClick={exportToPDF} disabled={isExporting}>
             Export as PDF
           </Button>
-          <Button onClick={() => handleExport("excel")} disabled={isExporting}>
-            Export as Excel
+          <Button onClick={exportToCSV} disabled={isExporting}>
+            Export as CSV
           </Button>
         </DialogFooter>
       </DialogContent>

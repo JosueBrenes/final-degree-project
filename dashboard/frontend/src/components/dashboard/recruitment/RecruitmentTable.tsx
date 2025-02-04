@@ -25,9 +25,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { jsPDF } from "jspdf";
-import "jspdf-autotable";
-import * as XLSX from "xlsx";
 
 interface Candidate {
   id: string;
@@ -105,24 +102,58 @@ export default function RecruitmentReport() {
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text("Recruitment Report", 14, 15);
-    doc.autoTable({
-      head: [["ID", "Name", "Position", "Score", "Experience", "Education"]],
-      body: filteredCandidates.map((c) => [
-        c.id,
-        c.name,
-        c.position,
-        c.score,
-        c.experience,
-        c.education,
-      ]),
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    const tbody = document.createElement("tbody");
+
+    // Create header
+    const headerRow = document.createElement("tr");
+    ["ID", "Name", "Position", "Score", "Experience", "Education"].forEach(
+      (text) => {
+        const th = document.createElement("th");
+        th.textContent = text;
+        headerRow.appendChild(th);
+      }
+    );
+    thead.appendChild(headerRow);
+
+    // Create body
+    filteredCandidates.forEach((c) => {
+      const row = document.createElement("tr");
+      [c.id, c.name, c.position, c.score, c.experience, c.education].forEach(
+        (text) => {
+          const td = document.createElement("td");
+          td.textContent = String(text);
+          row.appendChild(td);
+        }
+      );
+      tbody.appendChild(row);
     });
-    doc.save("recruitment-report.pdf");
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+
+    const style = document.createElement("style");
+    style.textContent = `
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid black; padding: 8px; text-align: left; }
+      th { background-color: #f2f2f2; }
+    `;
+
+    const win = window.open("", "_blank");
+    win!.document.write(
+      "<html><head><title>Recruitment Report</title></head><body>"
+    );
+    win!.document.write("<h1>Recruitment Report</h1>");
+    win!.document.head.appendChild(style);
+    win!.document.body.appendChild(table);
+    win!.document.write("</body></html>");
+    win!.document.close();
+    win!.print();
   };
 
-  const exportToExcel = () => {
-    const header = [
+  const exportToCSV = () => {
+    const headers = [
       "ID",
       "Name",
       "Position",
@@ -130,18 +161,24 @@ export default function RecruitmentReport() {
       "Experience",
       "Education",
     ];
-    const data = filteredCandidates.map((c) => [
-      c.id,
-      c.name,
-      c.position,
-      c.score,
-      c.experience,
-      c.education,
-    ]);
-    const ws = XLSX.utils.aoa_to_sheet([header, ...data]);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Candidates");
-    XLSX.writeFile(wb, "recruitment-report.xlsx");
+    const csvContent = [
+      headers.join(","),
+      ...filteredCandidates.map((c) =>
+        [c.id, c.name, c.position, c.score, c.experience, c.education].join(",")
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", "recruitment-report.csv");
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   return (
@@ -226,8 +263,8 @@ export default function RecruitmentReport() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">All Education Levels</SelectItem>
-                <SelectItem value="Bachelor's">Bachelor's</SelectItem>
-                <SelectItem value="Master's">Master's</SelectItem>
+                <SelectItem value="Bachelor's">Bachelors</SelectItem>
+                <SelectItem value="Master's">Masters</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -261,7 +298,7 @@ export default function RecruitmentReport() {
         </Table>
         <div className="mt-4 space-x-2">
           <Button onClick={exportToPDF}>Export to PDF</Button>
-          <Button onClick={exportToExcel}>Export to Excel</Button>
+          <Button onClick={exportToCSV}>Export to CSV</Button>
         </div>
       </CardContent>
     </Card>
