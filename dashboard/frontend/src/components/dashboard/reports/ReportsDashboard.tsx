@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 
 export default function ReportsDashboard() {
-  const [reports, setReports] = useState([
+  const [reports] = useState([
     {
       id: "REP-001",
       title: "Sales Report",

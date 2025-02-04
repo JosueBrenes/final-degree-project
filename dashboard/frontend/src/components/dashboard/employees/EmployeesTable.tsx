@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Plus,
   Plane,
@@ -9,6 +9,7 @@ import {
   Bell,
   DollarSign,
   BarChart,
+  ClipboardList,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -27,15 +28,30 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import EmployeesModal from "./EmployeesModal";
 import ApprovalDialog from "./ApprovalDialog";
 import SalaryManagementModal from "./SalaryManagementModal";
 import PerformanceReportModal from "./PerformanceReportModal";
 import AttendanceLog from "./AttendanceLog";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ClipboardList } from "lucide-react";
 
-const initialEmployees = [
+interface Employee {
+  id: string;
+  name: string;
+  position: string;
+  department: string;
+  status: string;
+  startDate: string;
+  salary: number;
+  team: string;
+}
+
+const initialEmployees: Employee[] = [
   {
     id: "EMP-001",
     name: "Carlos Pérez",
@@ -179,22 +195,24 @@ const initialEmployees = [
 ];
 
 export default function EmployeesTable() {
-  const [employees, setEmployees] = useState(initialEmployees);
+  const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
   const [isSalaryModalOpen, setIsSalaryModalOpen] = useState(false);
   const [isPerformanceReportOpen, setIsPerformanceReportOpen] = useState(false);
   const [isAttendanceLogOpen, setIsAttendanceLogOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
+    null
+  );
+  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSalaryClick = (employee) => {
+  const handleSalaryClick = (employee: Employee) => {
     setSelectedEmployee(employee);
     setIsSalaryModalOpen(true);
   };
 
-  const handleSalaryUpdate = (updatedEmployee) => {
+  const handleSalaryUpdate = (updatedEmployee: Employee) => {
     setEmployees(
       employees.map((emp) =>
         emp.id === updatedEmployee.id
@@ -204,13 +222,13 @@ export default function EmployeesTable() {
     );
   };
 
-  const handlePerformanceReportClick = (employee) => {
+  const handlePerformanceReportClick = (employee: Employee) => {
     setSelectedEmployee(employee);
     setSelectedTeam(null);
     setIsPerformanceReportOpen(true);
   };
 
-  const handleTeamPerformanceReportClick = (team) => {
+  const handleTeamPerformanceReportClick = (team: string) => {
     setSelectedTeam(team);
     setSelectedEmployee(null);
     setIsPerformanceReportOpen(true);
@@ -232,13 +250,16 @@ export default function EmployeesTable() {
           <Button onClick={() => setIsApprovalDialogOpen(true)}>
             <Bell className="mr-2 h-4 w-4" /> Approval Requests
           </Button>
-          <Button onClick={() => router.push("/admin/employees/vacations")}> 
+          <Button onClick={() => router.push("/admin/employees/vacations")}>
             <Plane className="mr-2 h-4 w-4" /> Vacations
           </Button>
-          <Button onClick={() => setIsAttendanceLogOpen(true)} className="border border-red-500">
+          <Button
+            onClick={() => setIsAttendanceLogOpen(true)}
+            className="border border-red-500"
+          >
             <ClipboardList className="mr-2 h-4 w-4" /> Attendance Log
           </Button>
-          <Button onClick={() => handleTeamPerformanceReportClick("All")}> 
+          <Button onClick={() => handleTeamPerformanceReportClick("All")}>
             <BarChart className="mr-2 h-4 w-4" /> Team Performance
           </Button>
         </div>

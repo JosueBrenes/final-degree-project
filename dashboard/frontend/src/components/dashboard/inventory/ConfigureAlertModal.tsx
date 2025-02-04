@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+"use client";
+
+import type React from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,20 +13,35 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+interface Product {
+  id: string;
+  name: string;
+  minStockLevel?: number;
+}
+
+interface ConfigureAlertModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  product: Product | null;
+  onUpdateMinStockLevel: (productId: string, minStockLevel: number) => void;
+}
+
 export default function ConfigureAlertModal({
   isOpen,
   onClose,
   product,
   onUpdateMinStockLevel,
-}) {
-  const [minStockLevel, setMinStockLevel] = useState(
+}: ConfigureAlertModalProps) {
+  const [minStockLevel, setMinStockLevel] = useState<number>(
     product?.minStockLevel || 0
   );
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onUpdateMinStockLevel(product.id, Number.parseInt(minStockLevel, 10));
-    onClose();
+    if (product) {
+      onUpdateMinStockLevel(product.id, minStockLevel);
+      onClose();
+    }
   };
 
   if (!product) return null;
@@ -43,12 +61,13 @@ export default function ConfigureAlertModal({
               id="minStockLevel"
               type="number"
               value={minStockLevel}
-              onChange={(e) => setMinStockLevel(e.target.value)}
+              onChange={(e) => setMinStockLevel(Number(e.target.value))}
+              min={0}
             />
           </div>
           <DialogFooter>
             <Button type="submit">Save</Button>
-            <Button type="button" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
           </DialogFooter>

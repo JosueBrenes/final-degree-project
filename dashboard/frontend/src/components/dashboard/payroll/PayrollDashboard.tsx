@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 
 export default function PayrollDashboard() {
-  const [payroll, setPayroll] = useState([
+  const [payroll] = useState([
     {
       id: "EMP-001",
       name: "Carlos Pérez",

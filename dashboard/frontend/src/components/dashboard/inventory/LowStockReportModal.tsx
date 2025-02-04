@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default function LowStockReportModal({ isOpen, onClose, inventory }) {
+interface InventoryItem {
+  id: string;
+  name: string;
+  category: string;
+  quantity: number;
+  minStockLevel: number;
+}
+
+interface LowStockReportModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  inventory: InventoryItem[];
+}
+
+export default function LowStockReportModal({
+  isOpen,
+  onClose,
+  inventory,
+}: LowStockReportModalProps) {
   const lowStockItems = inventory.filter(
     (item) => item.quantity < item.minStockLevel
   );
@@ -28,7 +46,7 @@ export default function LowStockReportModal({ isOpen, onClose, inventory }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Item ID</TableHead>
+              <TableHead className="w-[100px]">Item ID</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Current Quantity</TableHead>
@@ -38,7 +56,7 @@ export default function LowStockReportModal({ isOpen, onClose, inventory }) {
           <TableBody>
             {lowStockItems.map((item) => (
               <TableRow key={item.id}>
-                <TableCell>{item.id}</TableCell>
+                <TableCell className="font-medium">{item.id}</TableCell>
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.category}</TableCell>
                 <TableCell>{item.quantity}</TableCell>

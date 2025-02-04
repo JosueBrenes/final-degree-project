@@ -75,7 +75,7 @@ export default function VacationRequest() {
                 <TableCell>2024-01-10</TableCell>
                 <TableCell>2024-01-20</TableCell>
                 <TableCell>
-                  <Badge variant="warning">Pendiente</Badge>
+                  <Badge variant="default">Pendiente</Badge>
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -84,7 +84,7 @@ export default function VacationRequest() {
                 <TableCell>2024-02-01</TableCell>
                 <TableCell>2024-02-10</TableCell>
                 <TableCell>
-                  <Badge variant="success">Aprobado</Badge>
+                  <Badge variant="default">Aprobado</Badge>
                 </TableCell>
               </TableRow>
               <TableRow>

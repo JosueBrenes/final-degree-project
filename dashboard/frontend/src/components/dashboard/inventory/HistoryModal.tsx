@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import {
   Dialog,
   DialogContent,
@@ -14,14 +14,34 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const mockHistory = [
+interface HistoryEntry {
+  date: string;
+  type: "In" | "Out";
+  quantity: number;
+}
+
+interface Product {
+  name: string;
+}
+
+interface HistoryModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  product: Product | null;
+}
+
+const mockHistory: HistoryEntry[] = [
   { date: "2023-11-10", type: "In", quantity: 50 },
   { date: "2023-11-05", type: "Out", quantity: 20 },
   { date: "2023-10-30", type: "In", quantity: 100 },
   { date: "2023-10-25", type: "Out", quantity: 30 },
 ];
 
-export default function HistoryModal({ isOpen, onClose, product }) {
+export default function HistoryModal({
+  isOpen,
+  onClose,
+  product,
+}: HistoryModalProps) {
   if (!product) return null;
 
   return (
@@ -33,7 +53,7 @@ export default function HistoryModal({ isOpen, onClose, product }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
+              <TableHead className="w-[100px]">Date</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Quantity</TableHead>
             </TableRow>

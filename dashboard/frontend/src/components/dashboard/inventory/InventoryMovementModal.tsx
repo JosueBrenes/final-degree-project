@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+"use client";
+
+import type React from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,21 +14,39 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
+interface Product {
+  id: string;
+  name: string;
+  quantity: number;
+}
+
+interface InventoryMovementModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  product: Product | null;
+  type: "in" | "out";
+  onUpdateInventory: (
+    productId: string,
+    quantity: number,
+    type: "in" | "out"
+  ) => void;
+}
+
 export default function InventoryMovementModal({
   isOpen,
   onClose,
   product,
   type,
   onUpdateInventory,
-}) {
-  const [quantity, setQuantity] = useState(0);
+}: InventoryMovementModalProps) {
+  const [quantity, setQuantity] = useState<number>(0);
   const { toast } = useToast();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const movementQuantity = Number.parseInt(quantity);
+    const movementQuantity = Number(quantity);
 
-    if (type === "out" && movementQuantity > product.quantity) {
+    if (product && type === "out" && movementQuantity > product.quantity) {
       toast({
         title: "Error",
         description:
@@ -35,16 +56,18 @@ export default function InventoryMovementModal({
       return;
     }
 
-    onUpdateInventory(product.id, movementQuantity, type);
-    toast({
-      title: "Success",
-      description: `${
-        type === "in" ? "Entry" : "Exit"
-      } of ${movementQuantity} units of ${
-        product.name
-      } registered successfully.`,
-    });
-    onClose();
+    if (product) {
+      onUpdateInventory(product.id, movementQuantity, type);
+      toast({
+        title: "Success",
+        description: `${
+          type === "in" ? "Entry" : "Exit"
+        } of ${movementQuantity} units of ${
+          product.name
+        } registered successfully.`,
+      });
+      onClose();
+    }
   };
 
   if (!product) return null;
@@ -68,9 +91,9 @@ export default function InventoryMovementModal({
                 id="quantity"
                 type="number"
                 value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
+                onChange={(e) => setQuantity(Number(e.target.value))}
                 className="col-span-3"
-                min="1"
+                min={1}
                 required
               />
             </div>

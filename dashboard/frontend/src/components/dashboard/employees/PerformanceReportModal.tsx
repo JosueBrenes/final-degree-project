@@ -21,14 +21,31 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+interface Employee {
+  id: string;
+  name: string;
+}
+
 interface PerformanceReportModalProps {
   isOpen: boolean;
   onClose: () => void;
-  employee: any;
+  employee: Employee | null;
   team: string | null;
 }
 
-const mockPerformanceData = [
+interface PerformanceData {
+  name: string;
+  score: number;
+}
+
+interface TeamPerformanceData {
+  name: string;
+  productivity: number;
+  quality: number;
+  teamwork: number;
+}
+
+const mockPerformanceData: PerformanceData[] = [
   { name: "Productivity", score: 85 },
   { name: "Quality", score: 90 },
   { name: "Teamwork", score: 95 },
@@ -36,7 +53,7 @@ const mockPerformanceData = [
   { name: "Communication", score: 88 },
 ];
 
-const mockTeamPerformanceData = [
+const mockTeamPerformanceData: TeamPerformanceData[] = [
   { name: "Management", productivity: 90, quality: 95, teamwork: 85 },
   { name: "Administration", productivity: 85, quality: 88, teamwork: 92 },
   { name: "Operations", productivity: 92, quality: 87, teamwork: 90 },
@@ -47,7 +64,6 @@ export default function PerformanceReportModal({
   isOpen,
   onClose,
   employee,
-  team,
 }: PerformanceReportModalProps) {
   const [isExporting, setIsExporting] = useState(false);
 
@@ -115,24 +131,26 @@ export default function PerformanceReportModal({
     `;
 
     const win = window.open("", "_blank");
-    win!.document.write(
-      "<html><head><title>Performance Report</title></head><body>"
-    );
-    win!.document.write(
-      `<h1>${employee ? "Individual" : "Team"} Performance Report</h1>`
-    );
-    win!.document.head.appendChild(style);
-    win!.document.body.appendChild(table);
-    win!.document.write("</body></html>");
-    win!.document.close();
-    win!.print();
+    if (win) {
+      win.document.write(
+        "<html><head><title>Performance Report</title></head><body>"
+      );
+      win.document.write(
+        `<h1>${employee ? "Individual" : "Team"} Performance Report</h1>`
+      );
+      win.document.head.appendChild(style);
+      win.document.body.appendChild(table);
+      win.document.write("</body></html>");
+      win.document.close();
+      win.print();
+    }
     setIsExporting(false);
   };
 
   const renderIndividualReport = () => (
     <Card>
       <CardHeader>
-        <CardTitle>{employee.name}'s Performance Report</CardTitle>
+        <CardTitle>{employee?.name}s Performance Report</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
