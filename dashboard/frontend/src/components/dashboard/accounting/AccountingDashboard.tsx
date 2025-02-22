@@ -1,144 +1,165 @@
 "use client";
 
-import React from "react";
-import { PieChart, FileText, DollarSign, ClipboardList } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState } from "react";
+import { FileText, FileSpreadsheet, Pencil, Trash, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-const transactions = [
-  {
-    id: "TXN-001",
-    description: "Salary Payment",
-    date: "2023-12-01",
-    amount: "$50,000",
-    status: "Completed",
-  },
-  {
-    id: "TXN-002",
-    description: "Electricity Bill",
-    date: "2023-12-05",
-    amount: "$1,200",
-    status: "Completed",
-  },
-  {
-    id: "TXN-003",
-    description: "Office Supplies",
-    date: "2023-12-08",
-    amount: "$450",
-    status: "Pending",
-  },
-  {
-    id: "TXN-004",
-    description: "Software Subscription",
-    date: "2023-12-10",
-    amount: "$3,500",
-    status: "Completed",
-  },
-];
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { saveAs } from "file-saver";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
 
 const AccountingDashboard = () => {
+  const [invoices, setInvoices] = useState([
+    { id: "FAC-001", client: "Empresa XYZ", amount: 4500, type: "Ingreso", date: "2025-01-05" },
+    { id: "FAC-002", client: "Proveedor ABC", amount: 3200, type: "Egreso", date: "2025-02-10" },
+  ]);
+
+  const [ivaRate, setIvaRate] = useState(13); // IVA por defecto al 13%
+  const [retentionRate, setRetentionRate] = useState(2); // Retención por defecto al 2%
+  const [notifications, setNotifications] = useState([]);
+  const [editingInvoice, setEditingInvoice] = useState(null);
+
+  // Notificación de cambios en regulaciones fiscales
+  const addNotification = (message) => {
+    setNotifications((prev) => [...prev, { id: prev.length + 1, message }]);
+  };
+
+  // Actualizar la tasa de IVA
+  const updateIvaRate = (newRate) => {
+    setIvaRate(newRate);
+    addNotification(`La tasa de IVA ha sido actualizada a ${newRate}%`);
+  };
+
+  // Actualizar la tasa de retención
+  const updateRetentionRate = (newRate) => {
+    setRetentionRate(newRate);
+    addNotification(`La tasa de retención ha sido actualizada a ${newRate}%`);
+  };
+
+  // Función para exportar el resumen en PDF
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Resumen de Facturación", 10, 10);
+    autoTable(doc, {
+      head: [["ID", "Cliente", "Monto", "IVA Aplicado", "Tipo", "Fecha"]],
+      body: invoices.map((inv) => [
+        inv.id,
+        inv.client,
+        `$${inv.amount.toFixed(2)}`,
+        `$${(inv.amount * (ivaRate / 100)).toFixed(2)}`,
+        inv.type,
+        inv.date,
+      ]),
+    });
+    doc.save("Resumen_Facturacion.pdf");
+  };
+
+  // Función para exportar el resumen en Excel
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(invoices);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Facturas");
+    XLSX.writeFile(wb, "Resumen_Facturacion.xlsx");
+  };
+
   return (
-    <div className="flex h-screen bg-background">
-      <div className="flex-1 overflow-auto">
-        <main className="p-6">
-          <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-            <h1 className="text-3xl font-bold">Accounting Dashboard</h1>
-            <Button>
-              <FileText className="mr-2 h-4 w-4" /> Generate Report
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Total Expenses
-                </CardTitle>
-                <PieChart className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">$68,950</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Completed Transactions
-                </CardTitle>
-                <PieChart className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">3</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Pending Payments
-                </CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">$450</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Total Transactions
-                </CardTitle>
-                <ClipboardList className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{transactions.length}</div>
-              </CardContent>
-            </Card>
-          </div>
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Transactions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Transaction ID</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {transactions.map((txn) => (
-                    <TableRow key={txn.id}>
-                      <TableCell>{txn.id}</TableCell>
-                      <TableCell>{txn.description}</TableCell>
-                      <TableCell>{txn.date}</TableCell>
-                      <TableCell>{txn.amount}</TableCell>
-                      <TableCell
-                        className={
-                          txn.status === "Pending"
-                            ? "text-yellow-500"
-                            : "text-green-500"
-                        }
-                      >
-                        {txn.status}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </main>
+    <div className="p-6">
+      <h1 className="text-3xl font-bold mb-4">Módulo de Facturación e Impuestos</h1>
+
+      <div className="flex gap-4 mb-4">
+        <Button onClick={exportToPDF}>
+          <FileText className="mr-2 h-4 w-4" /> Exportar PDF
+        </Button>
+        <Button onClick={exportToExcel}>
+          <FileSpreadsheet className="mr-2 h-4 w-4" /> Exportar Excel
+        </Button>
+      </div>
+
+      {/* Configuración de impuestos */}
+      <div className="mt-6 p-4 border rounded-lg">
+        <h2 className="text-xl font-semibold mb-2">Configuración de Impuestos</h2>
+        <div className="flex items-center gap-4">
+          <label>Tasa de IVA (%):</label>
+          <Input
+            type="number"
+            value={ivaRate}
+            onChange={(e) => updateIvaRate(parseFloat(e.target.value))}
+          />
+        </div>
+        <div className="flex items-center gap-4 mt-2">
+          <label>Tasa de Retención (%):</label>
+          <Input
+            type="number"
+            value={retentionRate}
+            onChange={(e) => updateRetentionRate(parseFloat(e.target.value))}
+          />
+        </div>
+      </div>
+
+      {/* Facturas */}
+      <h2 className="text-2xl font-semibold mt-6 mb-3">Facturas Registradas</h2>
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>ID</TableHead>
+            <TableHead>Cliente/Proveedor</TableHead>
+            <TableHead>Monto</TableHead>
+            <TableHead>IVA Aplicado</TableHead>
+            <TableHead>Retención Aplicada</TableHead>
+            <TableHead>Tipo</TableHead>
+            <TableHead>Fecha</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {invoices.map((invoice) => (
+            <TableRow key={invoice.id}>
+              <TableCell>{invoice.id}</TableCell>
+              <TableCell>{invoice.client}</TableCell>
+              <TableCell>${invoice.amount.toFixed(2)}</TableCell>
+              <TableCell>${(invoice.amount * (ivaRate / 100)).toFixed(2)}</TableCell>
+              <TableCell>${(invoice.amount * (retentionRate / 100)).toFixed(2)}</TableCell>
+              <TableCell>{invoice.type}</TableCell>
+              <TableCell>{invoice.date}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {/* Notificaciones */}
+      <h2 className="text-2xl font-semibold mt-6 mb-3">Notificaciones Fiscales</h2>
+      <div className="p-4 border rounded-lg bg-gray-100">
+        {notifications.length > 0 ? (
+          notifications.map((notif) => (
+            <p key={notif.id} className="text-gray-700 flex items-center">
+              <Bell className="h-4 w-4 mr-2 text-yellow-500" /> {notif.message}
+            </p>
+          ))
+        ) : (
+          <p>No hay notificaciones.</p>
+        )}
+      </div>
+
+      {/* Resumen de Facturación */}
+      <div className="mt-6 p-4 border rounded-lg">
+        <h2 className="text-xl font-semibold mb-2">Resumen de Facturación</h2>
+        <p>
+          <strong>Total de Ingresos:</strong> $
+          {invoices
+            .filter((i) => i.type === "Ingreso")
+            .reduce((sum, i) => sum + i.amount, 0)
+            .toFixed(2)}
+        </p>
+        <p>
+          <strong>Total de Egresos:</strong> $
+          {invoices
+            .filter((i) => i.type === "Egreso")
+            .reduce((sum, i) => sum + i.amount, 0)
+            .toFixed(2)}
+        </p>
       </div>
     </div>
   );
