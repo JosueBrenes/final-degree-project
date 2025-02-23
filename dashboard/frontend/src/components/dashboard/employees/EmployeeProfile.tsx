@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -103,7 +104,10 @@ export default function EmployeeProfile() {
           </Alert>
         )}
       </CardContent>
-      <CardFooter className="flex justify-end">
+      <CardFooter className="flex justify-end gap-2">
+        <Link href="/dashboard/profile/salary">
+          <Button variant="outline">View Salary Details</Button>
+        </Link>
         <Dialog
           open={isRequestDialogOpen}
           onOpenChange={setIsRequestDialogOpen}
