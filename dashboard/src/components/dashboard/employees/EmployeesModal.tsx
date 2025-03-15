@@ -1,8 +1,10 @@
 "use client";
 
 import type React from "react";
+
 import { useState } from "react";
-import { X, AlertTriangle, Clock, CalendarIcon } from "lucide-react";
+import { addEmployee } from "@/lib/employees";
+import { X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -21,68 +23,67 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { cn } from "@/lib/utils";
-
-interface Empleado {
-  id: string;
-  nombre: string;
-  posicion: string;
-  departamento: string;
-  fechaInicio: string;
-  salario: string;
-}
 
 interface EmployeesModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (empleado: Empleado) => void;
-  empleado?: Empleado;
+  onEmployeeAdded: () => void;
 }
 
-interface ErroresFormulario {
-  nombre?: string;
-  posicion?: string;
-  departamento?: string;
-  fechaInicio?: string;
-  salario?: string;
+interface Empleado {
+  cedula: string;
+  nombre: string;
+  posicion: string;
+  departamento: string;
+  fechaInicio: string;
+  salario: number;
+  status: string;
 }
 
 const EmployeesModal: React.FC<EmployeesModalProps> = ({
   isOpen,
   onClose,
-  onSave,
-  empleado,
+  onEmployeeAdded,
 }) => {
-  const [formData, setFormData] = useState<Empleado>(
-    empleado || {
-      id: "",
-      nombre: "",
-      posicion: "",
-      departamento: "",
-      fechaInicio: "",
-      salario: "",
-    }
-  );
-  const [errores, setErrores] = useState<ErroresFormulario>({});
-  const [fecha, setFecha] = useState<Date | undefined>(
-    formData.fechaInicio ? new Date(formData.fechaInicio) : undefined
-  );
+  const [formData, setFormData] = useState({
+    cedula: "",
+    nombre: "",
+    posicion: "",
+    departamento: "",
+    fechaInicio: "",
+    salario: "",
+    password: "",
+    status: "Activo",
+  });
+  const [errores, setErrores] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+
+  // Formatear la cédula automáticamente en X-XXXX-XXXX
+  const formatCedula = (value: string) => {
+    const cleaned = value.replace(/\D/g, ""); // Eliminar caracteres no numéricos
+    if (cleaned.length <= 1) return cleaned;
+    if (cleaned.length <= 5)
+      return `${cleaned.slice(0, 1)}-${cleaned.slice(1)}`;
+    return `${cleaned.slice(0, 1)}-${cleaned.slice(1, 5)}-${cleaned.slice(
+      5,
+      9
+    )}`;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    let { id, value } = e.target;
+
+    if (id === "cedula") {
+      value = formatCedula(value);
+    }
+
+    setFormData({ ...formData, [id]: value });
   };
 
   const validar = (): boolean => {
-    const nuevosErrores: ErroresFormulario = {};
+    const nuevosErrores: Record<string, string> = {};
+    if (!formData.cedula || formData.cedula.length < 11)
+      nuevosErrores.cedula = "La cédula debe tener el formato X-XXXX-XXXX";
     if (!formData.nombre) nuevosErrores.nombre = "El nombre es obligatorio";
     if (!formData.posicion)
       nuevosErrores.posicion = "La posición es obligatoria";
@@ -91,33 +92,32 @@ const EmployeesModal: React.FC<EmployeesModalProps> = ({
     if (!formData.fechaInicio)
       nuevosErrores.fechaInicio = "La fecha de inicio es obligatoria";
     if (!formData.salario) nuevosErrores.salario = "El salario es obligatorio";
+    if (!formData.password || formData.password.length < 6)
+      nuevosErrores.password = "La contraseña debe tener al menos 6 caracteres";
+
     setErrores(nuevosErrores);
     return Object.keys(nuevosErrores).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validar()) return;
 
-    // Generar ID si es un nuevo empleado
-    if (!formData.id) {
-      const nuevoId = `EMP-${Math.floor(Math.random() * 1000)
-        .toString()
-        .padStart(3, "0")}`;
-      formData.id = nuevoId;
-    }
-
-    onSave(formData);
-    onClose();
-  };
-
-  const handleFechaSeleccionada = (date: Date | undefined) => {
-    setFecha(date);
-    if (date) {
-      setFormData({
-        ...formData,
-        fechaInicio: format(date, "yyyy-MM-dd"),
-      });
+    setLoading(true);
+    try {
+      await addEmployee(
+        {
+          ...formData,
+          salario: Number.parseFloat(formData.salario),
+        },
+        formData.password
+      );
+      onEmployeeAdded();
+      onClose();
+    } catch (error) {
+      console.error("Error al agregar empleado:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -125,12 +125,9 @@ const EmployeesModal: React.FC<EmployeesModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>
-            {empleado ? "Editar Empleado" : "Agregar Nuevo Empleado"}
-          </DialogTitle>
+          <DialogTitle>Agregar Nuevo Empleado</DialogTitle>
           <DialogDescription>
-            Complete los datos del empleado. Todos los cambios serán revisados
-            por Recursos Humanos.
+            Completa los datos del empleado.
           </DialogDescription>
           <Button
             variant="ghost"
@@ -143,67 +140,87 @@ const EmployeesModal: React.FC<EmployeesModalProps> = ({
           </Button>
         </DialogHeader>
 
-        <Alert className="mb-4">
-          <AlertTriangle className="h-4 w-4 text-amber-500" />
-          <AlertDescription className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-amber-500" />
-            <span>
-              Los cambios estarán en revisión por Recursos Humanos antes de ser
-              aplicados.
-            </span>
-          </AlertDescription>
-        </Alert>
-
         <form className="grid gap-4 py-2" onSubmit={handleSubmit}>
+          <div className="grid gap-2">
+            <Label htmlFor="cedula">Cédula</Label>
+            <Input
+              id="cedula"
+              value={formData.cedula}
+              onChange={handleChange}
+              placeholder="X-XXXX-XXXX"
+              maxLength={11}
+            />
+            {errores.cedula && (
+              <p className="text-red-500 text-sm">{errores.cedula}</p>
+            )}
+          </div>
+
           <div className="grid gap-2">
             <Label htmlFor="nombre">Nombre</Label>
             <Input
               id="nombre"
               value={formData.nombre}
               onChange={handleChange}
-              placeholder="Nombre completo del empleado"
+              placeholder="Nombre completo"
             />
             {errores.nombre && (
               <p className="text-red-500 text-sm">{errores.nombre}</p>
             )}
           </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="password">Contraseña</Label>
+            <Input
+              id="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Mínimo 6 caracteres"
+            />
+            {errores.password && (
+              <p className="text-red-500 text-sm">{errores.password}</p>
+            )}
+          </div>
+
           <div className="grid gap-2">
             <Label htmlFor="posicion">Posición</Label>
             <Select
               onValueChange={(val) =>
                 setFormData({ ...formData, posicion: val })
               }
-              value={formData.posicion}
             >
               <SelectTrigger id="posicion">
                 <SelectValue placeholder="Seleccionar Posición" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Gerente General">Gerente General</SelectItem>
-                <SelectItem value="Gerente Administrativo">
-                  Gerente Administrativo
+                <SelectItem value="general-manager">Gerente General</SelectItem>
+                <SelectItem value="admin-financial-manager">
+                  Gerente Financiero
                 </SelectItem>
-                <SelectItem value="Gerente de Operaciones">
+                <SelectItem value="operations-manager">
                   Gerente de Operaciones
                 </SelectItem>
-                <SelectItem value="Asistente de Operador">
-                  Asistente de Operador
+                <SelectItem value="plant-manager">Gerente de Planta</SelectItem>
+                <SelectItem value="admin-assistant">
+                  Asistente Administrativo
                 </SelectItem>
-                <SelectItem value="Operador">Operador</SelectItem>
-                <SelectItem value="Recepcionista">Recepcionista</SelectItem>
+                <SelectItem value="warehouse-staff">
+                  Personal de Almacén
+                </SelectItem>
+                <SelectItem value="operators">Operador</SelectItem>
               </SelectContent>
             </Select>
             {errores.posicion && (
               <p className="text-red-500 text-sm">{errores.posicion}</p>
             )}
           </div>
+
           <div className="grid gap-2">
             <Label htmlFor="departamento">Departamento</Label>
             <Select
               onValueChange={(val) =>
                 setFormData({ ...formData, departamento: val })
               }
-              value={formData.departamento}
             >
               <SelectTrigger id="departamento">
                 <SelectValue placeholder="Seleccionar Departamento" />
@@ -223,63 +240,56 @@ const EmployeesModal: React.FC<EmployeesModalProps> = ({
               <p className="text-red-500 text-sm">{errores.departamento}</p>
             )}
           </div>
+
           <div className="grid gap-2">
             <Label htmlFor="fechaInicio">Fecha de Inicio</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !fecha && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4 text-blue-500" />
-                  {fecha ? (
-                    format(fecha, "PPP", { locale: es })
-                  ) : (
-                    <span>Seleccionar fecha</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={fecha}
-                  onSelect={handleFechaSeleccionada}
-                  initialFocus
-                  locale={es}
-                />
-              </PopoverContent>
-            </Popover>
+            <Input
+              id="fechaInicio"
+              type="date"
+              value={formData.fechaInicio}
+              onChange={handleChange}
+            />
             {errores.fechaInicio && (
               <p className="text-red-500 text-sm">{errores.fechaInicio}</p>
             )}
           </div>
+
           <div className="grid gap-2">
             <Label htmlFor="salario">Salario</Label>
-            <div className="relative">
-              <span className="absolute left-3 top-2.5">$</span>
-              <Input
-                id="salario"
-                type="number"
-                value={formData.salario}
-                onChange={handleChange}
-                className="pl-7"
-                placeholder="0.00"
-              />
-            </div>
+            <Input
+              id="salario"
+              type="number"
+              value={formData.salario}
+              onChange={handleChange}
+              placeholder="0.00"
+            />
             {errores.salario && (
               <p className="text-red-500 text-sm">{errores.salario}</p>
             )}
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="status">Estado</Label>
+            <Select
+              defaultValue="Activo"
+              onValueChange={(val) => setFormData({ ...formData, status: val })}
+            >
+              <SelectTrigger id="status">
+                <SelectValue placeholder="Seleccionar Estado" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Activo">Activo</SelectItem>
+                <SelectItem value="Inactivo">Inactivo</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <DialogFooter className="mt-4">
             <Button variant="outline" type="button" onClick={onClose}>
               Cancelar
             </Button>
-            <Button type="submit">
-              {empleado ? "Actualizar Empleado" : "Agregar Empleado"}
+            <Button type="submit" disabled={loading}>
+              {loading ? "Guardando..." : "Agregar Empleado"}
             </Button>
           </DialogFooter>
         </form>
