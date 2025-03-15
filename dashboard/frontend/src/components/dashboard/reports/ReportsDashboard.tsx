@@ -29,6 +29,8 @@ import {
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
+import ReportScheduler from "./ReportScheduler";
+
 interface Report {
   id: string;
   title: string;
@@ -111,6 +113,7 @@ export default function ReportsDashboard() {
             <Button variant="secondary">
               <FileSpreadsheet className="mr-2 h-4 w-4" /> Generate Excel
             </Button>
+            <ReportScheduler /> 
           </div>
         </div>
       </CardHeader>
