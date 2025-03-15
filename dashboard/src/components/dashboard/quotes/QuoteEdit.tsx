@@ -1,9 +1,9 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { auth } from "@/lib/firebase";
-import { addQuote } from "@/lib/quotes";
+import { updateQuote } from "@/lib/quotes";
 import { X } from "lucide-react";
 import {
   Dialog,
@@ -26,10 +26,21 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 
-interface QuoteModalProps {
+interface Quote {
+  id: string;
+  client: string;
+  date: string;
+  total: number;
+  status: string;
+  items: string;
+  createdBy: string;
+}
+
+interface QuoteEditProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  quote: Quote | null;
 }
 
 const statusColors: Record<string, string> = {
@@ -40,21 +51,34 @@ const statusColors: Record<string, string> = {
   Completada: "bg-purple-500 text-white",
 };
 
-const QuoteModal: React.FC<QuoteModalProps> = ({
+const QuoteEdit: React.FC<QuoteEditProps> = ({
   isOpen,
   onClose,
   onSuccess,
+  quote,
 }) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     client: "",
     date: "",
     total: "",
-    status: "Pendiente",
+    status: "",
     items: "",
   });
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (quote) {
+      setFormData({
+        client: quote.client || "",
+        date: quote.date || "",
+        total: quote.total?.toString() || "",
+        status: quote.status || "",
+        items: quote.items?.toString() || "",
+      });
+    }
+  }, [quote]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -76,7 +100,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validar()) return;
+    if (!validar() || !quote) return;
 
     try {
       setLoading(true);
@@ -90,18 +114,17 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
         return;
       }
 
-      await addQuote(user.uid, {
+      await updateQuote(quote.id, {
         client: formData.client,
         date: formData.date,
         total: Number.parseFloat(formData.total),
         status: formData.status,
         items: Number.parseInt(formData.items, 10),
-        active: true,
       });
 
       toast({
         title: "Éxito",
-        description: "Cotización agregada correctamente.",
+        description: "Cotización actualizada correctamente.",
       });
 
       onSuccess();
@@ -110,7 +133,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Error al agregar la cotización.",
+        description: "Error al actualizar la cotización.",
       });
       console.error(error);
     } finally {
@@ -122,9 +145,9 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Agregar Nueva Cotización</DialogTitle>
+          <DialogTitle>Editar Cotización</DialogTitle>
           <DialogDescription>
-            Completa los datos de la cotización.
+            Modifica los datos de la cotización.
           </DialogDescription>
           <Button
             variant="ghost"
@@ -198,7 +221,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
           <div className="grid gap-2">
             <Label htmlFor="status">Estado</Label>
             <Select
-              defaultValue="Pendiente"
+              value={formData.status}
               onValueChange={(val) => setFormData({ ...formData, status: val })}
             >
               <SelectTrigger id="status">
@@ -236,7 +259,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
               Cancelar
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Guardando..." : "Agregar Cotización"}
+              {loading ? "Guardando..." : "Actualizar Cotización"}
             </Button>
           </DialogFooter>
         </form>
@@ -245,4 +268,4 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
   );
 };
 
-export default QuoteModal;
+export default QuoteEdit;

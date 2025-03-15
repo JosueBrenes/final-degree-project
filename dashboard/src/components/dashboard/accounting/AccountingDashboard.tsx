@@ -6,7 +6,6 @@ import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import {
-  BarChart3,
   DollarSign,
   TrendingUp,
   TrendingDown,
@@ -20,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -149,89 +147,128 @@ export function AccountingDashboard() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6 bg-background transition-colors duration-200">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
             Panel de Finanzas
           </h1>
           <p className="text-muted-foreground">
             Gestiona y visualiza tus finanzas personales
           </p>
         </div>
-        <div className="flex gap-2">
-          <AddIncomeModal onSuccess={() => window.location.reload()} />
-          <AddExpenseModal onSuccess={() => window.location.reload()} />
-          <Button onClick={exportToExcel} variant="outline">
+        <div className="flex flex-wrap gap-2 items-center">
+          <div className="[&>button]:bg-white [&>button]:text-black [&>button:hover]:bg-gray-100 [&>button_svg]:text-green-500 [&>button]:border-green-500 dark:[&>button]:bg-background dark:[&>button]:text-foreground dark:[&>button:hover]:bg-muted dark:[&>button]:border-green-0">
+            <AddIncomeModal onSuccess={() => window.location.reload()} />
+          </div>
+          <div className="[&>button]:bg-white [&>button]:text-black [&>button:hover]:bg-gray-100 [&>button_svg]:text-red-500 [&>button]:border-red-500 dark:[&>button]:bg-background dark:[&>button]:text-foreground dark:[&>button:hover]:bg-muted dark:[&>button]:border-red-500">
+            <AddExpenseModal onSuccess={() => window.location.reload()} />
+          </div>
+          <Button
+            onClick={exportToExcel}
+            variant="outline"
+            className="bg-green-600 hover:bg-green-700 text-white border-green-600 dark:bg-green-700 dark:hover:bg-green-800 dark:border-green-700"
+          >
             <FileSpreadsheet className="mr-2 h-4 w-4" />
-            Exportar Excel
+            <span className="hidden sm:inline">Exportar</span> Excel
           </Button>
-          <Button onClick={exportToPDF} variant="outline">
+          <Button
+            onClick={exportToPDF}
+            variant="outline"
+            className="bg-red-600 hover:bg-red-700 text-white border-red-600 dark:bg-red-700 dark:hover:bg-red-800 dark:border-red-700"
+          >
             <FileText className="mr-2 h-4 w-4" />
-            Exportar PDF
+            <span className="hidden sm:inline">Exportar</span> PDF
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Balance Total</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="overflow-hidden border-l-4 border-l-blue-500 shadow-sm hover:shadow transition-shadow duration-200">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Balance Total
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(summary.balance)}
+            <div className="flex justify-between items-center">
+              <div className="text-2xl font-bold text-foreground">
+                {formatCurrency(summary.balance)}
+              </div>
+              <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900">
+                <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Ingresos</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-500" />
+        <Card className="overflow-hidden border-l-4 border-l-green-500 shadow-sm hover:shadow transition-shadow duration-200">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Ingresos
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {formatCurrency(summary.totalIncome)}
+            <div className="flex justify-between items-center">
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                {formatCurrency(summary.totalIncome)}
+              </div>
+              <div className="p-2 rounded-full bg-green-100 dark:bg-green-900">
+                <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Egresos</CardTitle>
-            <TrendingDown className="h-4 w-4 text-red-500" />
+        <Card className="overflow-hidden border-l-4 border-l-red-500 shadow-sm hover:shadow transition-shadow duration-200">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Egresos
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {formatCurrency(summary.totalExpenses)}
+            <div className="flex justify-between items-center">
+              <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                {formatCurrency(summary.totalExpenses)}
+              </div>
+              <div className="p-2 rounded-full bg-red-100 dark:bg-red-900">
+                <TrendingDown className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Ahorros</CardTitle>
-            <Wallet className="h-4 w-4 text-blue-500" />
+        <Card className="overflow-hidden border-l-4 border-l-purple-500 shadow-sm hover:shadow transition-shadow duration-200">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Ahorros
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {formatCurrency(summary.balance > 0 ? summary.balance : 0)}
+            <div className="flex justify-between items-center">
+              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                {formatCurrency(summary.balance > 0 ? summary.balance : 0)}
+              </div>
+              <div className="p-2 rounded-full bg-purple-100 dark:bg-purple-900">
+                <Wallet className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Transacciones Recientes</CardTitle>
-          <CardDescription>
-            <span className="flex items-center text-amber-600">
+      <Card className="shadow-sm hover:shadow transition-shadow duration-200">
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center justify-between text-foreground">
+            <span>Transacciones Recientes</span>
+            <Badge
+              variant="outline"
+              className="ml-2 bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800"
+            >
               <Clock className="mr-1 h-3 w-3" />
-              Últimas 5 transacciones
-            </span>
-          </CardDescription>
+              Últimas 5
+            </Badge>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -239,14 +276,14 @@ export function AccountingDashboard() {
               transactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className="flex items-center justify-between"
+                  className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <Avatar
                       className={
                         transaction.type === "income"
-                          ? "bg-green-100"
-                          : "bg-red-100"
+                          ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-400"
+                          : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-400"
                       }
                     >
                       <AvatarFallback>
@@ -254,23 +291,48 @@ export function AccountingDashboard() {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="text-sm font-medium leading-none">
+                      <p className="text-sm font-medium leading-none text-foreground">
                         {transaction.description || "Sin descripción"}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {formatDate(transaction.date)}
+                        {formatDate(transaction.date)} • {transaction.category}
                       </p>
                     </div>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span
+                      className={`font-medium ${
+                        transaction.type === "income"
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-red-600 dark:text-red-400"
+                      }`}
+                    >
+                      {transaction.type === "income" ? "+" : "-"}
+                      {formatCurrency(transaction.amount)}
+                    </span>
+                    <Badge variant="outline" className="text-xs">
+                      {transaction.type === "income" ? "Ingreso" : "Egreso"}
+                    </Badge>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground text-center py-4">
                 No hay transacciones recientes.
               </p>
             )}
           </div>
         </CardContent>
+        <CardFooter className="pt-0 border-t flex justify-center">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-foreground"
+          >
+            Ver todas las transacciones
+            <ArrowUpRight className="ml-1 h-3 w-3" />
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   );
