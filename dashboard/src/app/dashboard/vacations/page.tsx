@@ -1,12 +1,18 @@
-import VacationRequest from "@/components/dashboard/vacations/VacationsDashboard";
-import { Wrapper } from "@/components/utils/Wrapper";
+"use client";
 
-const Home = () => {
+import { Wrapper } from "@/components/utils/Wrapper";
+import { VacationRequestForm } from "@/components/dashboard/vacations/VacationRequestForm";
+import { VacationTable } from "@/components/dashboard/vacations/VacationTable";
+
+export default function VacationsPage() {
   return (
     <Wrapper>
-      <VacationRequest />
+      <div className="flex min-h-screen flex-col">
+        <div className="flex-1 space-y-6 p-8 pt-6">
+          <VacationRequestForm />
+          <VacationTable />
+        </div>
+      </div>
     </Wrapper>
   );
-};
-
-export default Home;
+}
