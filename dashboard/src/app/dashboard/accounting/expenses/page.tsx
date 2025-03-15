@@ -1,10 +1,10 @@
-import { AccountingDashboard } from "@/components/dashboard/accounting/AccountingDashboard";
+import ExpenseForm from "@/components/dashboard/accounting/ExpenseForm";
 import { Wrapper } from "@/components/utils/Wrapper";
 
 const AccountingPage = () => {
   return (
     <Wrapper>
-      <AccountingDashboard />
+      <ExpenseForm />
     </Wrapper>
   );
 };
