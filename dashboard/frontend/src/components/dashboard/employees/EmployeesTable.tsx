@@ -10,6 +10,8 @@ import {
   DollarSign,
   BarChart,
   ClipboardList,
+  AlertTriangle,
+  Clock,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -27,6 +29,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import {
   Dialog,
@@ -34,6 +37,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import EmployeesModal from "./EmployeesModal";
 import ApprovalDialog from "./ApprovalDialog";
 import SalaryManagementModal from "./SalaryManagementModal";
@@ -49,148 +60,150 @@ interface Employee {
   startDate: string;
   salary: number;
   team: string;
+  salaryReview?: boolean;
 }
 
 const initialEmployees: Employee[] = [
   {
     id: "EMP-001",
     name: "Carlos Pérez",
-    position: "General Manager",
-    department: "Management",
-    status: "Active",
+    position: "Gerente General",
+    department: "Gerencia",
+    status: "Activo",
     startDate: "2015-01-15",
     salary: 120000,
-    team: "Management",
+    team: "Gerencia",
   },
   {
     id: "EMP-002",
     name: "María López",
-    position: "Administrative/Financial Manager",
-    department: "Administration",
-    status: "Active",
+    position: "Gerente Administrativo/Financiero",
+    department: "Administración",
+    status: "Activo",
     startDate: "2017-03-01",
     salary: 95000,
-    team: "Administration",
+    team: "Administración",
   },
   {
     id: "EMP-003",
     name: "Jorge Castillo",
-    position: "Operations Manager",
-    department: "Operations",
-    status: "Active",
+    position: "Gerente de Operaciones",
+    department: "Operaciones",
+    status: "Activo",
     startDate: "2018-05-12",
     salary: 90000,
-    team: "Operations",
+    team: "Operaciones",
   },
   {
     id: "EMP-004",
     name: "Luisa Sánchez",
-    position: "BonAqua Manager",
-    department: "Production",
-    status: "Active",
+    position: "Gerente BonAqua",
+    department: "Producción",
+    status: "Activo",
     startDate: "2019-07-22",
     salary: 85000,
-    team: "Production",
+    team: "Producción",
   },
   {
     id: "EMP-005",
     name: "Ana Morales",
-    position: "Administrative Assistant 3M/BonAqua",
-    department: "Administration",
-    status: "Active",
+    position: "Asistente Administrativo 3M/BonAqua",
+    department: "Administración",
+    status: "Activo",
     startDate: "2020-08-15",
     salary: 45000,
-    team: "Administration",
+    team: "Administración",
   },
   {
     id: "EMP-006",
     name: "Pedro Gutiérrez",
-    position: "BonAqua Operator",
-    department: "Production",
-    status: "Active",
+    position: "Operador BonAqua",
+    department: "Producción",
+    status: "Activo",
     startDate: "2021-02-10",
     salary: 50000,
-    team: "Production",
+    team: "Producción",
   },
   {
     id: "EMP-007",
     name: "Diego Vargas",
-    position: "3M Operator",
-    department: "Production",
-    status: "Active",
+    position: "Operador 3M",
+    department: "Producción",
+    status: "Activo",
     startDate: "2021-02-10",
     salary: 50000,
-    team: "Production",
+    team: "Producción",
+    salaryReview: true,
   },
   {
     id: "EMP-008",
     name: "Clara Fernández",
-    position: "Accounting Manager",
-    department: "Finance",
-    status: "Active",
+    position: "Gerente de Contabilidad",
+    department: "Finanzas",
+    status: "Activo",
     startDate: "2016-04-05",
     salary: 80000,
-    team: "Finance",
+    team: "Finanzas",
   },
   {
     id: "EMP-009",
     name: "Laura Ortiz",
-    position: "Receptionist",
-    department: "Administration",
-    status: "Active",
+    position: "Recepcionista",
+    department: "Administración",
+    status: "Activo",
     startDate: "2022-06-25",
     salary: 40000,
-    team: "Administration",
+    team: "Administración",
   },
   {
     id: "EMP-010",
     name: "Ricardo Gómez",
-    position: "Workshop Manager",
-    department: "Workshop",
-    status: "Active",
+    position: "Gerente de Taller",
+    department: "Taller",
+    status: "Activo",
     startDate: "2018-11-01",
     salary: 75000,
-    team: "Workshop",
+    team: "Taller",
   },
   {
     id: "EMP-011",
     name: "Juan Martínez",
-    position: "Welder",
-    department: "Workshop",
-    status: "Active",
+    position: "Soldador",
+    department: "Taller",
+    status: "Activo",
     startDate: "2020-09-14",
     salary: 60000,
-    team: "Workshop",
+    team: "Taller",
   },
   {
     id: "EMP-012",
     name: "Sofía Rojas",
-    position: "Warehouse Manager",
-    department: "Warehouse",
-    status: "Active",
+    position: "Gerente de Almacén",
+    department: "Almacén",
+    status: "Activo",
     startDate: "2017-02-28",
     salary: 70000,
-    team: "Warehouse",
+    team: "Almacén",
   },
   {
     id: "EMP-013",
     name: "Andrés Blanco",
-    position: "Mechanics Manager",
-    department: "Mechanics",
-    status: "Active",
+    position: "Gerente de Mecánica",
+    department: "Mecánica",
+    status: "Activo",
     startDate: "2019-10-10",
     salary: 70000,
-    team: "Mechanics",
+    team: "Mecánica",
   },
   ...Array.from({ length: 19 }, (_, i) => ({
     id: `EMP-${14 + i}`,
-    name: `Assistant ${i + 1}`,
-    position: "Operator Assistant",
-    department: "Production",
-    status: "Active",
+    name: `Asistente ${i + 1}`,
+    position: "Asistente de Operador",
+    department: "Producción",
+    status: "Activo",
     startDate: `2023-${(i % 12) + 1}-15`,
     salary: 48000,
-    team: "Production",
+    team: "Producción",
   })),
 ];
 
@@ -205,6 +218,7 @@ export default function EmployeesTable() {
     null
   );
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+  const [showSalaryAlert, setShowSalaryAlert] = useState(false);
   const router = useRouter();
 
   const handleSalaryClick = (employee: Employee) => {
@@ -213,13 +227,18 @@ export default function EmployeesTable() {
   };
 
   const handleSalaryUpdate = (updatedEmployee: Employee) => {
-    setEmployees(
-      employees.map((emp) =>
-        emp.id === updatedEmployee.id
-          ? { ...emp, salary: updatedEmployee.salary }
-          : emp
-      )
+    const newEmployees = employees.map((emp) =>
+      emp.id === updatedEmployee.id
+        ? { ...emp, salary: updatedEmployee.salary, salaryReview: true }
+        : emp
     );
+    setEmployees(newEmployees);
+    setShowSalaryAlert(true);
+
+    // Ocultar la alerta después de 5 segundos
+    setTimeout(() => {
+      setShowSalaryAlert(false);
+    }, 5000);
   };
 
   const handlePerformanceReportClick = (employee: Employee) => {
@@ -234,87 +253,219 @@ export default function EmployeesTable() {
     setIsPerformanceReportOpen(true);
   };
 
+  const pendingReviewCount = employees.filter((emp) => emp.salaryReview).length;
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Employees</CardTitle>
-        <CardDescription>
-          Manage employees, their positions, departments, and performance.
-        </CardDescription>
+    <Card className="shadow-md">
+      <CardHeader className="border-b">
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle className="text-2xl font-bold">Empleados</CardTitle>
+            <CardDescription>
+              Gestione empleados, sus posiciones, departamentos y desempeño.
+            </CardDescription>
+          </div>
+          {pendingReviewCount > 0 && (
+            <Badge variant="outline" className="flex items-center gap-1">
+              <Clock className="h-3 w-3 text-amber-500" />
+              {pendingReviewCount}{" "}
+              {pendingReviewCount === 1 ? "revisión" : "revisiones"} pendiente
+              {pendingReviewCount !== 1 ? "s" : ""}
+            </Badge>
+          )}
+        </div>
       </CardHeader>
-      <CardContent>
-        <div className="flex justify-end space-x-4 mb-4">
+      <CardContent className="p-6">
+        {showSalaryAlert && (
+          <Alert className="mb-6">
+            <AlertTriangle className="h-4 w-4 text-amber-500" />
+            <AlertTitle>Cambio de salario en revisión</AlertTitle>
+            <AlertDescription>
+              El cambio de salario ha sido registrado y está pendiente de
+              aprobación por Recursos Humanos. El proceso puede tardar hasta 48
+              horas hábiles.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <div className="flex flex-wrap justify-end gap-3 mb-6">
           <Button onClick={() => setIsModalOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> Add Employee
-          </Button>
-          <Button onClick={() => setIsApprovalDialogOpen(true)}>
-            <Bell className="mr-2 h-4 w-4" /> Approval Requests
-          </Button>
-          <Button onClick={() => router.push("/admin/employees/vacations")}>
-            <Plane className="mr-2 h-4 w-4" /> Vacations
+            <Plus className="mr-2 h-4 w-4" /> Agregar Empleado
           </Button>
           <Button
-            onClick={() => setIsAttendanceLogOpen(true)}
-            className="border border-red-500"
+            variant="outline"
+            onClick={() => setIsApprovalDialogOpen(true)}
           >
-            <ClipboardList className="mr-2 h-4 w-4" /> Attendance Log
+            <Bell className="mr-2 h-4 w-4 text-amber-500" /> Solicitudes de
+            Aprobación
+            {pendingReviewCount > 0 && (
+              <Badge variant="outline" className="ml-2">
+                {pendingReviewCount}
+              </Badge>
+            )}
           </Button>
-          <Button onClick={() => handleTeamPerformanceReportClick("All")}>
-            <BarChart className="mr-2 h-4 w-4" /> Team Performance
+          <Button
+            variant="outline"
+            onClick={() => router.push("/admin/employees/vacations")}
+          >
+            <Plane className="mr-2 h-4 w-4 text-blue-500" /> Vacaciones
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setIsAttendanceLogOpen(true)}
+          >
+            <ClipboardList className="mr-2 h-4 w-4 text-green-500" /> Registro
+            de Asistencia
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleTeamPerformanceReportClick("All")}
+          >
+            <BarChart className="mr-2 h-4 w-4 text-purple-500" /> Desempeño del
+            Equipo
           </Button>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Position</TableHead>
-              <TableHead>Department</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Start Date</TableHead>
-              <TableHead>Salary</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {employees.map((employee) => (
-              <TableRow key={employee.id}>
-                <TableCell className="font-medium">{employee.id}</TableCell>
-                <TableCell>{employee.name}</TableCell>
-                <TableCell>{employee.position}</TableCell>
-                <TableCell>{employee.department}</TableCell>
-                <TableCell>{employee.status}</TableCell>
-                <TableCell>{employee.startDate}</TableCell>
-                <TableCell>${employee.salary.toLocaleString()}</TableCell>
-                <TableCell className="text-right">
-                  <Button variant="ghost" size="icon" className="mr-2">
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="mr-2"
-                    onClick={() => handleSalaryClick(employee)}
-                  >
-                    <DollarSign className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="mr-2"
-                    onClick={() => handlePerformanceReportClick(employee)}
-                  >
-                    <BarChart className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
+
+        <div className="rounded-md border overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="font-semibold">ID</TableHead>
+                <TableHead className="font-semibold">Nombre</TableHead>
+                <TableHead className="font-semibold">Posición</TableHead>
+                <TableHead className="font-semibold">Departamento</TableHead>
+                <TableHead className="font-semibold">Estado</TableHead>
+                <TableHead className="font-semibold">Fecha de Inicio</TableHead>
+                <TableHead className="font-semibold">Salario</TableHead>
+                <TableHead className="text-right font-semibold">
+                  Acciones
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {employees.map((employee) => (
+                <TableRow key={employee.id}>
+                  <TableCell className="font-medium">{employee.id}</TableCell>
+                  <TableCell>{employee.name}</TableCell>
+                  <TableCell
+                    className="max-w-[200px] truncate"
+                    title={employee.position}
+                  >
+                    {employee.position}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{employee.department}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{employee.status}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    {new Date(employee.startDate).toLocaleDateString("es-ES")}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2">
+                      ${employee.salary.toLocaleString()}
+                      {employee.salaryReview && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Clock className="h-4 w-4 text-amber-500" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>En revisión por Recursos Humanos</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="icon" className="mr-1">
+                            <Pencil className="h-4 w-4 text-slate-500" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Editar empleado</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="mr-1"
+                            onClick={() => handleSalaryClick(employee)}
+                            disabled={employee.salaryReview}
+                          >
+                            <DollarSign className="h-4 w-4 text-blue-500" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            {employee.salaryReview
+                              ? "Salario en revisión"
+                              : "Gestionar salario"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="mr-1"
+                            onClick={() =>
+                              handlePerformanceReportClick(employee)
+                            }
+                          >
+                            <BarChart className="h-4 w-4 text-purple-500" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Ver informe de desempeño</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Eliminar empleado</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
+      <CardFooter className="border-t py-3 flex justify-between">
+        <div className="text-sm text-slate-500">
+          Mostrando {employees.length} empleados
+        </div>
+        <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="flex items-center gap-1">
+            <Clock className="h-3 w-3 text-amber-500" />
+            <span>En revisión por RRHH</span>
+          </div>
+        </div>
+      </CardFooter>
       <EmployeesModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -338,7 +489,7 @@ export default function EmployeesTable() {
       <Dialog open={isAttendanceLogOpen} onOpenChange={setIsAttendanceLogOpen}>
         <DialogContent className="sm:max-w-[800px]">
           <DialogHeader>
-            <DialogTitle>Attendance Log</DialogTitle>
+            <DialogTitle>Registro de Asistencia</DialogTitle>
           </DialogHeader>
           <AttendanceLog />
         </DialogContent>

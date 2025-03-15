@@ -19,11 +19,29 @@ import {
   BarChart2,
   Smile,
   Umbrella,
+  DollarSign,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { sidebarConfig } from "@/config/sidebarConfig";
+import { useUser } from "@/hooks/use-user";
+
+const icons = {
+  Home,
+  FileText,
+  User,
+  Warehouse,
+  ClipboardList,
+  BarChart2,
+  Smile,
+  Umbrella,
+  DollarSign,
+};
 
 export function DashboardSidebar() {
+  const { role } = useUser();
+  const menuItems = sidebarConfig[role as keyof typeof sidebarConfig] || [];
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -46,97 +64,22 @@ export function DashboardSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>Navegación</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard">
-                    <Home className="mr-2 h-4 w-4" />
-                    Dashboard
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/quotes">
-                    <FileText className="mr-2 h-4 w-4" />
-                    Quotes
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/recruitment">
-                    <User className="mr-2 h-4 w-4" />
-                    Recruitment
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/inventory">
-                    <Warehouse className="mr-2 h-4 w-4" />
-                    Inventory
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/employees">
-                    <User className="mr-2 h-4 w-4" />
-                    Employees
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/accounting">
-                    <BarChart2 className="mr-2 h-4 w-4" />
-                    Accounting
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/logs">
-                    <ClipboardList className="mr-2 h-4 w-4" />
-                    Logs
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/reports">
-                    <BarChart2 className="mr-2 h-4 w-4" />
-                    Reports
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/payroll">
-                    <FileText className="mr-2 h-4 w-4" />
-                    Payroll
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/satisfaction">
-                    <Smile className="mr-2 h-4 w-4" />
-                    Satisfaction
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/vacations">
-                    <Umbrella className="mr-2 h-4 w-4" />
-                    Vacations
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {menuItems.map(({ path, label, icon }) => {
+                const IconComponent = icons[icon];
+                return (
+                  <SidebarMenuItem key={path}>
+                    <SidebarMenuButton asChild>
+                      <Link href={path}>
+                        <IconComponent className="mr-2 h-4 w-4" />
+                        {label}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

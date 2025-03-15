@@ -26,36 +26,36 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { CheckCircle } from "lucide-react";
 
-interface PayrollData {
-  month: string;
-  baseSalary: number;
-  bonuses: {
-    type: string;
-    amount: number;
+interface DatosNomina {
+  mes: string;
+  salarioBase: number;
+  bonificaciones: {
+    tipo: string;
+    monto: number;
   }[];
-  deductions: {
-    type: string;
-    amount: number;
+  deducciones: {
+    tipo: string;
+    monto: number;
   }[];
-  netSalary: number;
+  salarioNeto: number;
 }
 
-const currentPayroll: PayrollData = {
-  month: "February 2025",
-  baseSalary: 5000,
-  bonuses: [
-    { type: "Performance Bonus", amount: 500 },
-    { type: "Attendance Bonus", amount: 200 },
+const nominaActual: DatosNomina = {
+  mes: "Febrero 2025",
+  salarioBase: 5000,
+  bonificaciones: [
+    { tipo: "Bono de rendimiento", monto: 500 },
+    { tipo: "Bono de asistencia", monto: 200 },
   ],
-  deductions: [
-    { type: "Income Tax", amount: 750 },
-    { type: "Health Insurance", amount: 200 },
-    { type: "Social Security", amount: 300 },
+  deducciones: [
+    { tipo: "Impuesto sobre la renta", monto: 750 },
+    { tipo: "Seguro de salud", monto: 200 },
+    { tipo: "Seguridad social", monto: 300 },
   ],
-  netSalary: 4450,
+  salarioNeto: 4450,
 };
 
-export default function PayrollReceipt() {
+export default function ReciboNomina() {
   const [isAdjustmentDialogOpen, setIsAdjustmentDialogOpen] = useState(false);
   const [selectedBonus, setSelectedBonus] = useState("");
   const [adjustmentRequest, setAdjustmentRequest] = useState("");
@@ -63,9 +63,9 @@ export default function PayrollReceipt() {
 
   const handleSubmitAdjustment = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Adjustment request submitted:", {
-      bonus: selectedBonus,
-      request: adjustmentRequest,
+    console.log("Solicitud de ajuste enviada:", {
+      bono: selectedBonus,
+      solicitud: adjustmentRequest,
     });
     setIsAdjustmentDialogOpen(false);
     setSelectedBonus("");
@@ -77,32 +77,32 @@ export default function PayrollReceipt() {
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>Payroll Receipt</CardTitle>
+        <CardTitle>Recibo de Nómina</CardTitle>
         <CardDescription>
-          {currentPayroll.month} - Detailed Payment Breakdown
+          {nominaActual.mes} - Desglose detallado del pago
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Base Salary */}
+        {/* Salario Base */}
         <div>
-          <h3 className="text-lg font-semibold mb-2">Base Salary</h3>
-          <p className="text-2xl">${currentPayroll.baseSalary.toFixed(2)}</p>
+          <h3 className="text-lg font-semibold mb-2">Salario Base</h3>
+          <p className="text-2xl">${nominaActual.salarioBase.toFixed(2)}</p>
         </div>
 
         <Separator />
 
-        {/* Bonuses */}
+        {/* Bonificaciones */}
         <div>
-          <h3 className="text-lg font-semibold mb-2">Bonuses</h3>
+          <h3 className="text-lg font-semibold mb-2">Bonificaciones</h3>
           <div className="space-y-2">
-            {currentPayroll.bonuses.map((bonus) => (
+            {nominaActual.bonificaciones.map((bono) => (
               <div
-                key={bonus.type}
+                key={bono.tipo}
                 className="flex justify-between items-center"
               >
-                <span>{bonus.type}</span>
+                <span>{bono.tipo}</span>
                 <span className="text-green-600">
-                  +${bonus.amount.toFixed(2)}
+                  +${bono.monto.toFixed(2)}
                 </span>
               </div>
             ))}
@@ -111,18 +111,18 @@ export default function PayrollReceipt() {
 
         <Separator />
 
-        {/* Deductions */}
+        {/* Deducciones */}
         <div>
-          <h3 className="text-lg font-semibold mb-2">Deductions</h3>
+          <h3 className="text-lg font-semibold mb-2">Deducciones</h3>
           <div className="space-y-2">
-            {currentPayroll.deductions.map((deduction) => (
+            {nominaActual.deducciones.map((deduccion) => (
               <div
-                key={deduction.type}
+                key={deduccion.tipo}
                 className="flex justify-between items-center"
               >
-                <span>{deduction.type}</span>
+                <span>{deduccion.tipo}</span>
                 <span className="text-red-600">
-                  -${deduction.amount.toFixed(2)}
+                  -${deduccion.monto.toFixed(2)}
                 </span>
               </div>
             ))}
@@ -131,21 +131,21 @@ export default function PayrollReceipt() {
 
         <Separator />
 
-        {/* Net Salary */}
+        {/* Salario Neto */}
         <div>
-          <h3 className="text-lg font-semibold mb-2">Net Salary</h3>
+          <h3 className="text-lg font-semibold mb-2">Salario Neto</h3>
           <p className="text-3xl font-bold">
-            ${currentPayroll.netSalary.toFixed(2)}
+            ${nominaActual.salarioNeto.toFixed(2)}
           </p>
         </div>
 
         {showAlert && (
           <Alert>
             <CheckCircle className="h-4 w-4" />
-            <AlertTitle>Success</AlertTitle>
+            <AlertTitle>Éxito</AlertTitle>
             <AlertDescription>
-              Your bonus adjustment request has been sent to the manager for
-              review.
+              Tu solicitud de ajuste de bonificación ha sido enviada al gerente
+              para su revisión.
             </AlertDescription>
           </Alert>
         )}
@@ -157,13 +157,14 @@ export default function PayrollReceipt() {
           onOpenChange={setIsAdjustmentDialogOpen}
         >
           <DialogTrigger asChild>
-            <Button>Request Bonus Adjustment</Button>
+            <Button>Solicitar Ajuste de Bonificación</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Request Bonus Adjustment</DialogTitle>
+              <DialogTitle>Solicitar Ajuste de Bonificación</DialogTitle>
               <DialogDescription>
-                Select the bonus you want to adjust and describe your request.
+                Selecciona la bonificación que deseas ajustar y describe tu
+                solicitud.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmitAdjustment}>
@@ -174,15 +175,15 @@ export default function PayrollReceipt() {
                   onChange={(e) => setSelectedBonus(e.target.value)}
                   required
                 >
-                  <option value="">Select bonus type</option>
-                  {currentPayroll.bonuses.map((bonus) => (
-                    <option key={bonus.type} value={bonus.type}>
-                      {bonus.type}
+                  <option value="">Selecciona el tipo de bonificación</option>
+                  {nominaActual.bonificaciones.map((bono) => (
+                    <option key={bono.tipo} value={bono.tipo}>
+                      {bono.tipo}
                     </option>
                   ))}
                 </select>
                 <Textarea
-                  placeholder="Describe why you're requesting an adjustment..."
+                  placeholder="Describe por qué solicitas un ajuste..."
                   value={adjustmentRequest}
                   onChange={(e) => setAdjustmentRequest(e.target.value)}
                   className="min-h-[100px]"
@@ -194,7 +195,7 @@ export default function PayrollReceipt() {
                   type="submit"
                   disabled={!selectedBonus || !adjustmentRequest}
                 >
-                  Submit Request
+                  Enviar Solicitud
                 </Button>
               </DialogFooter>
             </form>

@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-  Plus,
-  Plane,
-  Trash2,
-  Bell,
-  BarChart,
-  ClipboardList,
+  Calendar,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  Search,
+  Filter,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -20,376 +20,242 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import EmployeesModal from "./EmployeesModal";
-import ApprovalDialog from "./ApprovalDialog";
-import PerformanceReportModal from "./PerformanceReportModal";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface AttendanceRecord {
+interface RegistroAsistencia {
   id: string;
-  employeeId: string;
-  employeeName: string;
-  clockIn: string | null;
-  clockOut: string | null;
+  empleadoId: string;
+  empleadoNombre: string;
+  departamento: string;
+  entrada: string | null;
+  salida: string | null;
+  estado: "presente" | "ausente" | "tarde" | "completado";
 }
 
-const initialEmployees = [
+// Datos de ejemplo
+const registrosIniciales: RegistroAsistencia[] = [
   {
-    id: "EMP-001",
-    name: "Carlos Pérez",
-    position: "General Manager",
-    department: "Management",
-    status: "Active",
-    startDate: "2015-01-15",
-    salary: 120000,
-    team: "Management",
+    id: "REG-001",
+    empleadoId: "EMP-001",
+    empleadoNombre: "Carlos Pérez",
+    departamento: "Gerencia",
+    entrada: "2024-03-11T08:00:00",
+    salida: "2024-03-11T17:00:00",
+    estado: "completado",
   },
   {
-    id: "EMP-002",
-    name: "María López",
-    position: "Administrative/Financial Manager",
-    department: "Administration",
-    status: "Active",
-    startDate: "2017-03-01",
-    salary: 95000,
-    team: "Administration",
+    id: "REG-002",
+    empleadoId: "EMP-002",
+    empleadoNombre: "María López",
+    departamento: "Administración",
+    entrada: "2024-03-11T08:15:00",
+    salida: null,
+    estado: "presente",
   },
   {
-    id: "EMP-003",
-    name: "Jorge Castillo",
-    position: "Operations Manager",
-    department: "Operations",
-    status: "Active",
-    startDate: "2018-05-12",
-    salary: 90000,
-    team: "Operations",
+    id: "REG-003",
+    empleadoId: "EMP-003",
+    empleadoNombre: "Jorge Castillo",
+    departamento: "Operaciones",
+    entrada: "2024-03-11T08:45:00",
+    salida: null,
+    estado: "tarde",
   },
-  {
-    id: "EMP-004",
-    name: "Luisa Sánchez",
-    position: "BonAqua Manager",
-    department: "Production",
-    status: "Active",
-    startDate: "2019-07-22",
-    salary: 85000,
-    team: "Production",
-  },
-  {
-    id: "EMP-005",
-    name: "Ana Morales",
-    position: "Administrative Assistant 3M/BonAqua",
-    department: "Administration",
-    status: "Active",
-    startDate: "2020-08-15",
-    salary: 45000,
-    team: "Administration",
-  },
-  {
-    id: "EMP-006",
-    name: "Pedro Gutiérrez",
-    position: "BonAqua Operator",
-    department: "Production",
-    status: "Active",
-    startDate: "2021-02-10",
-    salary: 50000,
-    team: "Production",
-  },
-  {
-    id: "EMP-007",
-    name: "Diego Vargas",
-    position: "3M Operator",
-    department: "Production",
-    status: "Active",
-    startDate: "2021-02-10",
-    salary: 50000,
-    team: "Production",
-  },
-  {
-    id: "EMP-008",
-    name: "Clara Fernández",
-    position: "Accounting Manager",
-    department: "Finance",
-    status: "Active",
-    startDate: "2016-04-05",
-    salary: 80000,
-    team: "Finance",
-  },
-  {
-    id: "EMP-009",
-    name: "Laura Ortiz",
-    position: "Receptionist",
-    department: "Administration",
-    status: "Active",
-    startDate: "2022-06-25",
-    salary: 40000,
-    team: "Administration",
-  },
-  {
-    id: "EMP-010",
-    name: "Ricardo Gómez",
-    position: "Workshop Manager",
-    department: "Workshop",
-    status: "Active",
-    startDate: "2018-11-01",
-    salary: 75000,
-    team: "Workshop",
-  },
-  {
-    id: "EMP-011",
-    name: "Juan Martínez",
-    position: "Welder",
-    department: "Workshop",
-    status: "Active",
-    startDate: "2020-09-14",
-    salary: 60000,
-    team: "Workshop",
-  },
-  {
-    id: "EMP-012",
-    name: "Sofía Rojas",
-    position: "Warehouse Manager",
-    department: "Warehouse",
-    status: "Active",
-    startDate: "2017-02-28",
-    salary: 70000,
-    team: "Warehouse",
-  },
-  {
-    id: "EMP-013",
-    name: "Andrés Blanco",
-    position: "Mechanics Manager",
-    department: "Mechanics",
-    status: "Active",
-    startDate: "2019-10-10",
-    salary: 70000,
-    team: "Mechanics",
-  },
-  ...Array.from({ length: 19 }, (_, i) => ({
-    id: `EMP-${14 + i}`,
-    name: `Assistant ${i + 1}`,
-    position: "Operator Assistant",
-    department: "Production",
-    status: "Active",
-    startDate: `2023-${(i % 12) + 1}-15`,
-    salary: 48000,
-    team: "Production",
-  })),
+  // Agrega más registros según necesites
 ];
 
-export default function EmployeesTable() {
-  const [employees] = useState(initialEmployees);
-  const [attendanceRecords, setAttendanceRecords] = useState<
-    AttendanceRecord[]
-  >([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
-  const [isPerformanceReportOpen, setIsPerformanceReportOpen] = useState(false);
-  const [isAttendanceLogOpen, setIsAttendanceLogOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
-  const router = useRouter();
+export default function AttendanceLog() {
+  const [registros, setRegistros] =
+    useState<RegistroAsistencia[]>(registrosIniciales);
+  const [filtro, setFiltro] = useState("");
+  const [departamento, setDepartamento] = useState("");
 
-  const handleClockIn = (employeeId: string, employeeName: string) => {
-    const existingRecord = attendanceRecords.find(
-      (record) => record.employeeId === employeeId && !record.clockOut
-    );
+  const formatearHora = (fecha: string) => {
+    return new Date(fecha).toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
-    if (existingRecord) {
-      alert(`El empleado ${employeeName} ya ha registrado su entrada.`);
-      return;
+  const formatearFecha = (fecha: string) => {
+    return new Date(fecha).toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  const getEstadoBadge = (estado: string) => {
+    switch (estado) {
+      case "presente":
+        return (
+          <Badge variant="outline" className="flex items-center gap-1">
+            <Clock className="h-3 w-3 text-green-500" />
+            Presente
+          </Badge>
+        );
+      case "ausente":
+        return (
+          <Badge variant="outline" className="flex items-center gap-1">
+            <XCircle className="h-3 w-3 text-red-500" />
+            Ausente
+          </Badge>
+        );
+      case "tarde":
+        return (
+          <Badge variant="outline" className="flex items-center gap-1">
+            <Clock className="h-3 w-3 text-amber-500" />
+            Tarde
+          </Badge>
+        );
+      case "completado":
+        return (
+          <Badge variant="outline" className="flex items-center gap-1">
+            <CheckCircle2 className="h-3 w-3 text-blue-500" />
+            Completado
+          </Badge>
+        );
+      default:
+        return <Badge variant="outline">{estado}</Badge>;
     }
-
-    const newRecord: AttendanceRecord = {
-      id: `ATT-${Date.now()}`,
-      employeeId,
-      employeeName,
-      clockIn: new Date().toISOString(),
-      clockOut: null,
-    };
-
-    setAttendanceRecords((prevRecords) => [...prevRecords, newRecord]);
-    console.log(`Empleado ${employeeName} ha registrado su entrada.`);
   };
 
-  const handleClockOut = (recordId: string) => {
-    setAttendanceRecords((prevRecords) =>
-      prevRecords.map((record) =>
-        record.id === recordId
-          ? { ...record, clockOut: new Date().toISOString() }
-          : record
-      )
-    );
-    console.log(`El empleado ha registrado su salida.`);
-  };
-
-  const handleTeamPerformanceReportClick = (team: string) => {
-    setSelectedTeam(team);
-    setSelectedEmployee(null);
-    setIsPerformanceReportOpen(true);
-  };
+  const registrosFiltrados = registros.filter((registro) => {
+    const coincideFiltro =
+      registro.empleadoNombre.toLowerCase().includes(filtro.toLowerCase()) ||
+      registro.empleadoId.toLowerCase().includes(filtro.toLowerCase());
+    const coincideDepartamento =
+      !departamento || registro.departamento === departamento;
+    return coincideFiltro && coincideDepartamento;
+  });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Employees</CardTitle>
-        <CardDescription>
-          Manage employees, their positions, departments, and performance.
-        </CardDescription>
+    <Card className="border-0 shadow-none">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-xl font-semibold">
+          Registro de Asistencia
+        </CardTitle>
       </CardHeader>
-      <CardContent className="overflow-auto max-h-[600px]">
-        <div className="flex justify-end space-x-4 mb-4">
-          <Button onClick={() => setIsModalOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> Add Employee
+      <CardContent>
+        <div className="flex items-center space-x-4 mb-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por nombre o ID..."
+              value={filtro}
+              onChange={(e) => setFiltro(e.target.value)}
+              className="pl-8"
+            />
+          </div>
+          <Select value={departamento} onValueChange={setDepartamento}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Filtrar por departamento" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos los departamentos</SelectItem>
+              <SelectItem value="Gerencia">Gerencia</SelectItem>
+              <SelectItem value="Administración">Administración</SelectItem>
+              <SelectItem value="Operaciones">Operaciones</SelectItem>
+              <SelectItem value="Producción">Producción</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="outline" className="flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-blue-500" />
+            Hoy
           </Button>
-          <Button onClick={() => setIsApprovalDialogOpen(true)}>
-            <Bell className="mr-2 h-4 w-4" /> Approval Requests
-          </Button>
-          <Button onClick={() => router.push("/admin/employees/vacations")}>
-            <Plane className="mr-2 h-4 w-4" /> Vacations
-          </Button>
-          <Button onClick={() => setIsAttendanceLogOpen(true)}>
-            <ClipboardList className="mr-2 h-4 w-4" /> Attendance Log
-          </Button>
-          <Button onClick={() => handleTeamPerformanceReportClick("All")}>
-            <BarChart className="mr-2 h-4 w-4" /> Team Performance
+          <Button variant="outline" className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-purple-500" />
+            Filtros
           </Button>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Position</TableHead>
-              <TableHead>Department</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Start Date</TableHead>
-              <TableHead>Salary</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {employees.map((employee) => (
-              <TableRow key={employee.id}>
-                <TableCell className="font-medium">{employee.id}</TableCell>
-                <TableCell>{employee.name}</TableCell>
-                <TableCell>{employee.position}</TableCell>
-                <TableCell>{employee.department}</TableCell>
-                <TableCell>{employee.status}</TableCell>
-                <TableCell>{employee.startDate}</TableCell>
-                <TableCell>${employee.salary.toLocaleString()}</TableCell>
-                <TableCell className="text-right">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="mr-2"
-                        onClick={() =>
-                          handleClockIn(employee.id, employee.name)
-                        }
-                      >
-                        <ClipboardList className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Registrar Entrada</TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleClockOut(employee.id)}
-                      >
-                        <ClipboardList className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Registrar Salida</TooltipContent>
-                  </Tooltip>
-                  <Button variant="ghost" size="icon">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-      <EmployeesModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={(employee) => {
-          console.log("Employee saved:", employee);
-        }}
-      />
-      <ApprovalDialog
-        isOpen={isApprovalDialogOpen}
-        onClose={() => setIsApprovalDialogOpen(false)}
-      />
-      <PerformanceReportModal
-        isOpen={isPerformanceReportOpen}
-        onClose={() => setIsPerformanceReportOpen(false)}
-        employee={selectedEmployee}
-        team={selectedTeam}
-      />
-      <Dialog open={isAttendanceLogOpen} onOpenChange={setIsAttendanceLogOpen}>
-        <DialogContent className="sm:max-w-[800px] overflow-auto max-h-[400px]">
-          <DialogHeader>
-            <DialogTitle>Attendance Log</DialogTitle>
-          </DialogHeader>
+
+        <ScrollArea className="h-[400px] rounded-md border">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-muted/50 sticky top-0">
               <TableRow>
                 <TableHead>Empleado</TableHead>
+                <TableHead>Departamento</TableHead>
+                <TableHead>Fecha</TableHead>
                 <TableHead>Entrada</TableHead>
                 <TableHead>Salida</TableHead>
-                <TableHead>Acciones</TableHead>
+                <TableHead>Estado</TableHead>
+                <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {attendanceRecords.map((record) => (
-                <TableRow key={record.id}>
-                  <TableCell>{record.employeeName}</TableCell>
+              {registrosFiltrados.map((registro) => (
+                <TableRow key={registro.id}>
                   <TableCell>
-                    {record.clockIn
-                      ? new Date(record.clockIn).toLocaleString()
-                      : "--"}
+                    <div>
+                      <div className="font-medium">
+                        {registro.empleadoNombre}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {registro.empleadoId}
+                      </div>
+                    </div>
                   </TableCell>
                   <TableCell>
-                    {record.clockOut
-                      ? new Date(record.clockOut).toLocaleString()
-                      : "--"}
+                    <Badge variant="outline">{registro.departamento}</Badge>
                   </TableCell>
                   <TableCell>
-                    {!record.clockOut ? (
-                      <Button onClick={() => handleClockOut(record.id)}>
+                    {registro.entrada && formatearFecha(registro.entrada)}
+                  </TableCell>
+                  <TableCell>
+                    {registro.entrada && formatearHora(registro.entrada)}
+                  </TableCell>
+                  <TableCell>
+                    {registro.salida ? formatearHora(registro.salida) : "--:--"}
+                  </TableCell>
+                  <TableCell>{getEstadoBadge(registro.estado)}</TableCell>
+                  <TableCell className="text-right">
+                    {!registro.salida && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-2"
+                      >
+                        <Clock className="h-4 w-4 text-green-500" />
                         Registrar Salida
                       </Button>
-                    ) : (
-                      <span>Completo</span>
                     )}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </DialogContent>
-      </Dialog>
+        </ScrollArea>
+
+        <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
+          <div>Mostrando {registrosFiltrados.length} registros</div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Clock className="h-3 w-3 text-green-500" />
+              <span>Presente</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="h-3 w-3 text-amber-500" />
+              <span>Tarde</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-3 w-3 text-blue-500" />
+              <span>Completado</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <XCircle className="h-3 w-3 text-red-500" />
+              <span>Ausente</span>
+            </div>
+          </div>
+        </div>
+      </CardContent>
     </Card>
   );
 }

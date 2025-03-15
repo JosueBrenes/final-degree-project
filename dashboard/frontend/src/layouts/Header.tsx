@@ -13,9 +13,6 @@ export function DashboardHeader() {
       <SidebarTrigger
         className={cn("h-10 w-10 p-3  z-0", isMobile ? " left-0" : "relative")}
       />
-      <div className="ml-auto p-3">
-        <ThemeToggle />
-      </div>
     </header>
   );
 }

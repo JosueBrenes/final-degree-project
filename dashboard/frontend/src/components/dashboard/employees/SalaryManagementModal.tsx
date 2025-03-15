@@ -11,30 +11,29 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle } from "lucide-react";
 
-interface Employee {
+interface Empleado {
   id: string;
   name: string;
   salary: number;
   benefits: string;
 }
 
-interface SalaryManagementModalProps {
+interface ModalGestionSalarioProps {
   isOpen: boolean;
   onClose: () => void;
-  employee: Employee | null;
-  onSalaryUpdate: (updatedEmployee: Employee) => void;
+  employee: Empleado | null;
+  onSalaryUpdate: (updatedEmployee: Empleado) => void;
 }
 
-export default function SalaryManagementModal({
+export default function ModalGestionSalario({
   isOpen,
   onClose,
   employee,
   onSalaryUpdate,
-}: SalaryManagementModalProps) {
+}: ModalGestionSalarioProps) {
   const [salary, setSalary] = useState<string>("");
   const [benefits, setBenefits] = useState<string>("");
   const [showAlert, setShowAlert] = useState<boolean>(false);
@@ -48,14 +47,14 @@ export default function SalaryManagementModal({
 
   const handleSave = () => {
     if (employee) {
-      const updatedEmployee: Employee = {
+      const empleadoActualizado: Empleado = {
         ...employee,
         salary: Number.parseFloat(salary),
         benefits: benefits,
       };
-      onSalaryUpdate(updatedEmployee);
+      onSalaryUpdate(empleadoActualizado);
 
-      // Simulate saving
+      // Simular guardado
       setTimeout(() => {
         setShowAlert(true);
         setTimeout(() => {
@@ -72,12 +71,12 @@ export default function SalaryManagementModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Manage Salary and Benefits</DialogTitle>
+          <DialogTitle>Gestionar Salario y Beneficios</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Name
+              Nombre
             </Label>
             <Input
               id="name"
@@ -88,7 +87,7 @@ export default function SalaryManagementModal({
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="salary" className="text-right">
-              Salary
+              Salario
             </Label>
             <Input
               id="salary"
@@ -98,31 +97,10 @@ export default function SalaryManagementModal({
               className="col-span-3"
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="benefits" className="text-right">
-              Benefits
-            </Label>
-            <Textarea
-              id="benefits"
-              value={benefits}
-              onChange={(e) => setBenefits(e.target.value)}
-              className="col-span-3"
-            />
-          </div>
         </div>
         <DialogFooter>
-          <Button onClick={handleSave}>Save Changes</Button>
+          <Button onClick={handleSave}>Guardar Cambios</Button>
         </DialogFooter>
-        {showAlert && (
-          <Alert className="mt-4">
-            <CheckCircle className="h-4 w-4" />
-            <AlertTitle>Success</AlertTitle>
-            <AlertDescription>
-              Salary and benefits updated successfully. Employee will be
-              notified.
-            </AlertDescription>
-          </Alert>
-        )}
       </DialogContent>
     </Dialog>
   );

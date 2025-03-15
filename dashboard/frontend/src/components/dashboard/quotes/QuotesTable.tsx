@@ -90,10 +90,10 @@ export default function QuotesTable() {
                 <TableCell>{quote.items}</TableCell>
                 <TableCell className="text-right">
                   <Button variant="ghost" size="icon" className="mr-2">
-                    <Pencil className="h-4 w-4" />
+                    <Pencil className=" text-gray-700 h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon">
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="text-red-500 h-4 w-4" />
                   </Button>
                 </TableCell>
               </TableRow>

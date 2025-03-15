@@ -86,7 +86,6 @@ const InterviewScheduler: React.FC<InterviewSchedulerProps> = ({
                         <TableCell>
                           {new Date(interview.dateTime).toLocaleString()}
                         </TableCell>{" "}
-                        {/* Mostrar en formato local */}
                         <TableCell>{interview.interviewer}</TableCell>
                         <TableCell>{interview.location}</TableCell>
                         <TableCell>{interview.status}</TableCell>

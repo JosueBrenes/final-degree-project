@@ -17,9 +17,9 @@ const ThemeToggle = () => {
   return (
     <button className="py-4" onClick={() => toggleTheme()}>
       {theme === "dark" ? (
-        <Sun className="text-yellow-700 h-10 w-10" />
+        <Sun className="text-yellow-700 h-5 w-5 " />
       ) : (
-        <Moon className="text-gray-700 h-10 w-10" />
+        <Moon className="text-gray-700 h-5  w-5 " />
       )}
     </button>
   );
