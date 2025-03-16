@@ -32,6 +32,7 @@ export default function SalaryManagementModal({
   const [month, setMonth] = useState("");
   const [isGeneratingPayroll, setIsGeneratingPayroll] = useState(false);
   const [payrollSuccess, setPayrollSuccess] = useState(false);
+  const [isPaymentSchedulerOpen, setIsPaymentSchedulerOpen] = useState(false); // Estado para abrir PaymentScheduler
 
   useEffect(() => {
     if (employee) {
@@ -56,7 +57,7 @@ export default function SalaryManagementModal({
 
   const handleGeneratePayroll = async () => {
     if (!month) {
-      alert("Por favor selecciona un mes.");
+      alert("Please select a month.");
       return;
     }
 
@@ -68,14 +69,14 @@ export default function SalaryManagementModal({
         body: JSON.stringify({ month }),
       });
 
-      if (!response.ok) throw new Error("Error al generar la planilla");
+      if (!response.ok) throw new Error("Error generating payroll");
 
       setPayrollSuccess(true);
       setTimeout(() => {
         setPayrollSuccess(false);
       }, 3000);
     } catch (error) {
-      alert("Hubo un error al generar la planilla.");
+      alert("An error occurred while generating the payroll.");
     }
     setIsGeneratingPayroll(false);
   };
@@ -84,20 +85,20 @@ export default function SalaryManagementModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Gestión de Salario y Planilla</DialogTitle>
+          <DialogTitle>Salary and Payroll Management</DialogTitle>
         </DialogHeader>
         
         {employee && (
           <div className="grid gap-4 py-4">
-            {/* Nombre */}
+            {/* Name */}
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">Nombre</Label>
+              <Label htmlFor="name" className="text-right">Name</Label>
               <Input id="name" value={employee.name} className="col-span-3" disabled />
             </div>
 
-            {/* Salario */}
+            {/* Salary */}
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="salary" className="text-right">Salario</Label>
+              <Label htmlFor="salary" className="text-right">Salary</Label>
               <Input
                 id="salary"
                 type="number"
@@ -107,9 +108,9 @@ export default function SalaryManagementModal({
               />
             </div>
 
-            {/* Beneficios */}
+            {/* Benefits */}
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="benefits" className="text-right">Beneficios</Label>
+              <Label htmlFor="benefits" className="text-right">Benefits</Label>
               <Textarea
                 id="benefits"
                 value={benefits}
@@ -118,9 +119,9 @@ export default function SalaryManagementModal({
               />
             </div>
 
-            {/* Generación de Planilla */}
+            {/* Payroll Generation */}
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="month" className="text-right">Mes</Label>
+              <Label htmlFor="month" className="text-right">Month</Label>
               <Input
                 id="month"
                 type="month"
@@ -133,32 +134,39 @@ export default function SalaryManagementModal({
         )}
 
         <DialogFooter>
-          <Button onClick={handleSave}>Guardar Cambios</Button>
+          <Button onClick={handleSave}>Save Changes</Button>
           <Button 
             onClick={handleGeneratePayroll} 
             disabled={isGeneratingPayroll} 
             variant="outline"
           >
-            {isGeneratingPayroll ? "Generando..." : "Generar Planilla"}
+            {isGeneratingPayroll ? "Generating..." : "Generate Payroll"}
+          </Button>
+          <Button 
+            onClick={() => setIsPaymentSchedulerOpen(true)} // Botón para abrir PaymentScheduler
+            variant="outline"
+          >
+            Schedule Payment
           </Button>
         </DialogFooter>
 
-        {/* Alertas de Éxito */}
+        {/* Success Alerts */}
         {showAlert && (
           <Alert className="mt-4">
             <CheckCircle className="h-4 w-4" />
-            <AlertTitle>Éxito</AlertTitle>
-            <AlertDescription>Salario y beneficios actualizados correctamente.</AlertDescription>
+            <AlertTitle>Success</AlertTitle>
+            <AlertDescription>Salary and benefits updated successfully.</AlertDescription>
           </Alert>
         )}
 
         {payrollSuccess && (
           <Alert className="mt-4">
             <CheckCircle className="h-4 w-4" />
-            <AlertTitle>Planilla Generada</AlertTitle>
-            <AlertDescription>La planilla del mes seleccionado ha sido generada con éxito.</AlertDescription>
+            <AlertTitle>Payroll Generated</AlertTitle>
+            <AlertDescription>The payroll for the selected month has been successfully generated.</AlertDescription>
           </Alert>
         )}
+        
       </DialogContent>
     </Dialog>
   );
