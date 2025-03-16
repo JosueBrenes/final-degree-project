@@ -128,7 +128,7 @@ export function VacationRequestForm() {
   return (
     <Card className="shadow-md">
       <CardHeader className="border-b">
-        <CardTitle className="text-2xl font-bold">
+        <CardTitle className="text-xl sm:text-2xl font-bold">
           Solicitud de Vacaciones
         </CardTitle>
         <CardDescription>
@@ -136,7 +136,7 @@ export function VacationRequestForm() {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <Alert variant="destructive" className="mb-6">
@@ -168,7 +168,7 @@ export function VacationRequestForm() {
                     setFormData({ ...formData, startDate: e.target.value })
                   }
                   required
-                  className="text-black [&::-webkit-calendar-picker-indicator]:invert"
+                  className="text-black [&::-webkit-calendar-picker-indicator]:invert h-10"
                 />
               </div>
               <div className="grid gap-2">
@@ -181,7 +181,7 @@ export function VacationRequestForm() {
                     setFormData({ ...formData, endDate: e.target.value })
                   }
                   required
-                  className="text-black [&::-webkit-calendar-picker-indicator]:invert"
+                  className="text-black [&::-webkit-calendar-picker-indicator]:invert h-10"
                 />
               </div>
             </div>
@@ -194,16 +194,16 @@ export function VacationRequestForm() {
                   setFormData({ ...formData, reason: e.target.value })
                 }
                 placeholder="Describa brevemente el motivo de su solicitud de vacaciones..."
-                className="min-h-[120px]"
+                className="min-h-[100px] sm:min-h-[120px] resize-none"
                 required
               />
             </div>
           </div>
 
           {requestedDays > 0 && (
-            <div className="rounded-lg bg-blue-50 p-4 text-blue-800 border border-blue-200">
+            <div className="rounded-lg bg-blue-50 p-3 sm:p-4 text-blue-800 border border-blue-200">
               <div className="flex items-center gap-2 font-medium">
-                <Calendar className="h-5 w-5 text-blue-600" />
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
                 <span>Resumen de solicitud</span>
               </div>
               <div className="mt-2 space-y-1 text-sm">
@@ -231,7 +231,7 @@ export function VacationRequestForm() {
         </form>
       </CardContent>
 
-      <CardFooter className="border-t py-4 px-6 bg-muted/20">
+      <CardFooter className="border-t py-3 sm:py-4 px-4 sm:px-6 bg-muted/20">
         <div className="text-sm text-muted-foreground">
           {userName ? (
             <p>

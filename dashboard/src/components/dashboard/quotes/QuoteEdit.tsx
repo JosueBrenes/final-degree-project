@@ -143,9 +143,9 @@ const QuoteEdit: React.FC<QuoteEditProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>Editar Cotización</DialogTitle>
+      <DialogContent className="w-[95vw] max-w-[500px] p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="space-y-2">
+          <DialogTitle className="text-xl">Editar Cotización</DialogTitle>
           <DialogDescription>
             Modifica los datos de la cotización.
           </DialogDescription>
@@ -162,12 +162,15 @@ const QuoteEdit: React.FC<QuoteEditProps> = ({
 
         <form className="grid gap-4 py-2" onSubmit={handleSubmit}>
           <div className="grid gap-2">
-            <Label htmlFor="client">Cliente</Label>
+            <Label htmlFor="client" className="text-sm font-medium">
+              Cliente
+            </Label>
             <Input
               id="client"
               value={formData.client}
               onChange={handleChange}
               placeholder="Nombre del cliente"
+              className="h-10"
             />
             {errores.client && (
               <p className="text-red-500 text-sm">{errores.client}</p>
@@ -175,56 +178,69 @@ const QuoteEdit: React.FC<QuoteEditProps> = ({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="date">Fecha</Label>
+            <Label htmlFor="date" className="text-sm font-medium">
+              Fecha
+            </Label>
             <Input
               id="date"
               type="date"
               value={formData.date}
               onChange={handleChange}
+              className="h-10"
             />
             {errores.date && (
               <p className="text-red-500 text-sm">{errores.date}</p>
             )}
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="total">Total</Label>
-            <Input
-              id="total"
-              type="number"
-              step="0.01"
-              min="0"
-              value={formData.total}
-              onChange={handleChange}
-              placeholder="0.00"
-            />
-            {errores.total && (
-              <p className="text-red-500 text-sm">{errores.total}</p>
-            )}
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="total" className="text-sm font-medium">
+                Total
+              </Label>
+              <Input
+                id="total"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.total}
+                onChange={handleChange}
+                placeholder="0.00"
+                className="h-10"
+              />
+              {errores.total && (
+                <p className="text-red-500 text-sm">{errores.total}</p>
+              )}
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="items" className="text-sm font-medium">
+                Número de ítems
+              </Label>
+              <Input
+                id="items"
+                type="number"
+                min="1"
+                value={formData.items}
+                onChange={handleChange}
+                placeholder="Cantidad de ítems"
+                className="h-10"
+              />
+              {errores.items && (
+                <p className="text-red-500 text-sm">{errores.items}</p>
+              )}
+            </div>
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="items">Número de ítems</Label>
-            <Input
-              id="items"
-              type="number"
-              min="1"
-              value={formData.items}
-              onChange={handleChange}
-              placeholder="Cantidad de ítems"
-            />
-            {errores.items && (
-              <p className="text-red-500 text-sm">{errores.items}</p>
-            )}
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="status">Estado</Label>
+            <Label htmlFor="status" className="text-sm font-medium">
+              Estado
+            </Label>
             <Select
               value={formData.status}
               onValueChange={(val) => setFormData({ ...formData, status: val })}
             >
-              <SelectTrigger id="status">
+              <SelectTrigger id="status" className="h-10">
                 <SelectValue placeholder="Seleccionar estado">
                   {formData.status && (
                     <div className="flex items-center">
@@ -249,16 +265,21 @@ const QuoteEdit: React.FC<QuoteEditProps> = ({
             </Select>
           </div>
 
-          <DialogFooter className="mt-4">
+          <DialogFooter className="mt-4 flex-col sm:flex-row gap-2 sm:gap-0">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
               disabled={loading}
+              className="w-full sm:w-auto"
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full sm:w-auto"
+            >
               {loading ? "Guardando..." : "Actualizar Cotización"}
             </Button>
           </DialogFooter>

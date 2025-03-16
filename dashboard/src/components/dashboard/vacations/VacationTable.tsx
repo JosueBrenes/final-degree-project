@@ -183,9 +183,11 @@ export function VacationTable() {
   return (
     <Card className="shadow-md">
       <CardHeader className="border-b">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <CardTitle className="text-2xl font-bold">Mis Vacaciones</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl font-bold">
+              Mis Vacaciones
+            </CardTitle>
             <CardDescription>
               Historial y estado de sus solicitudes de vacaciones
             </CardDescription>
@@ -193,9 +195,9 @@ export function VacationTable() {
         </div>
       </CardHeader>
 
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <div className="mb-6 space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -205,9 +207,9 @@ export function VacationTable() {
                 className="pl-9"
               />
             </div>
-            <div>
+            <div className="w-full sm:w-auto">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px]">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="Estado" />
                 </SelectTrigger>
@@ -239,14 +241,22 @@ export function VacationTable() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="font-semibold">
+                    <TableHead className="font-semibold whitespace-nowrap">
                       Fecha Inicio
                     </TableHead>
-                    <TableHead className="font-semibold">Fecha Fin</TableHead>
-                    <TableHead className="font-semibold">Días</TableHead>
-                    <TableHead className="font-semibold">Estado</TableHead>
-                    <TableHead className="font-semibold">Motivo</TableHead>
-                    <TableHead className="font-semibold text-right">
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Fecha Fin
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Días
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Estado
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Motivo
+                    </TableHead>
+                    <TableHead className="font-semibold text-right whitespace-nowrap">
                       Acciones
                     </TableHead>
                   </TableRow>
@@ -254,10 +264,16 @@ export function VacationTable() {
                 <TableBody>
                   {filteredVacations.map((vac) => (
                     <TableRow key={vac.id}>
-                      <TableCell>{formatDate(vac.startDate)}</TableCell>
-                      <TableCell>{formatDate(vac.endDate)}</TableCell>
-                      <TableCell>{vac.requestedDays}</TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {formatDate(vac.startDate)}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {formatDate(vac.endDate)}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {vac.requestedDays}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <Badge
                           className={
                             statusColors[vac.status] || "bg-gray-500 text-white"
@@ -266,10 +282,10 @@ export function VacationTable() {
                           {getStatusLabel(vac.status)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="max-w-[200px] truncate">
+                      <TableCell className="max-w-[150px] truncate">
                         {vac.reason || "—"}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right whitespace-nowrap">
                         {vac.status === "pending" && (
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
@@ -285,7 +301,7 @@ export function VacationTable() {
                                 )}
                               </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent>
+                            <AlertDialogContent className="w-[95vw] max-w-[425px]">
                               <AlertDialogHeader>
                                 <AlertDialogTitle>
                                   Cancelar solicitud
@@ -296,11 +312,13 @@ export function VacationTable() {
                                   deshacer.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
+                                <AlertDialogCancel className="w-full sm:w-auto">
+                                  Cancelar
+                                </AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => handleDelete(vac.id)}
-                                  className="bg-red-500 hover:bg-red-600"
+                                  className="bg-red-500 hover:bg-red-600 w-full sm:w-auto"
                                 >
                                   Eliminar
                                 </AlertDialogAction>
@@ -318,13 +336,13 @@ export function VacationTable() {
         )}
       </CardContent>
 
-      <CardFooter className="border-t py-4 px-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full text-sm text-muted-foreground gap-2">
+      <CardFooter className="border-t py-4 px-4 sm:px-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full text-sm text-muted-foreground gap-4">
           <div>
             Mostrando {filteredVacations.length} de {vacations.length}{" "}
             solicitudes
           </div>
-          <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
             <div className="flex items-center gap-1">
               <Badge
                 variant="outline"

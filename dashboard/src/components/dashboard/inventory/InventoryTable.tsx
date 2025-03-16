@@ -145,22 +145,25 @@ export function InventoryTable() {
   return (
     <Card className="shadow-md">
       <CardHeader className="border-b">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <CardTitle className="text-2xl font-bold">Inventario</CardTitle>
             <CardDescription>
               Gestione ítems, categorías, stock y ubicaciones.
             </CardDescription>
           </div>
-          <Button onClick={() => setAddModalOpen(true)}>
+          <Button
+            onClick={() => setAddModalOpen(true)}
+            className="self-start sm:self-auto"
+          >
             <Plus className="mr-2 h-4 w-4" /> Agregar Ítem
           </Button>
         </div>
       </CardHeader>
 
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <div className="mb-6 space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -170,9 +173,9 @@ export function InventoryTable() {
                 className="pl-9"
               />
             </div>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px]">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="Categoría" />
                 </SelectTrigger>
@@ -186,7 +189,7 @@ export function InventoryTable() {
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px]">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="Estado" />
                 </SelectTrigger>
@@ -219,13 +222,25 @@ export function InventoryTable() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="font-semibold">Código</TableHead>
-                    <TableHead className="font-semibold">Nombre</TableHead>
-                    <TableHead className="font-semibold">Categoría</TableHead>
-                    <TableHead className="font-semibold">Stock</TableHead>
-                    <TableHead className="font-semibold">Ubicación</TableHead>
-                    <TableHead className="font-semibold">Estado</TableHead>
-                    <TableHead className="font-semibold text-right">
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Código
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Nombre
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Categoría
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Stock
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Ubicación
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Estado
+                    </TableHead>
+                    <TableHead className="font-semibold text-right whitespace-nowrap">
                       Acciones
                     </TableHead>
                   </TableRow>
@@ -233,9 +248,13 @@ export function InventoryTable() {
                 <TableBody>
                   {filteredInventory.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell>{item.id}</TableCell>
-                      <TableCell className="font-medium">{item.name}</TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {item.id}
+                      </TableCell>
+                      <TableCell className="font-medium max-w-[150px] truncate">
+                        {item.name}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <Badge
                           className={
                             categoryColors[item.category] ||
@@ -245,11 +264,13 @@ export function InventoryTable() {
                           {item.category}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         {item.stock} {item.unit}
                       </TableCell>
-                      <TableCell>{item.location}</TableCell>
-                      <TableCell>
+                      <TableCell className="max-w-[100px] truncate">
+                        {item.location}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <Badge
                           className={
                             statusColors[item.status] ||
@@ -259,7 +280,7 @@ export function InventoryTable() {
                           {item.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right whitespace-nowrap">
                         <div className="flex justify-end gap-2">
                           <Button
                             variant="outline"
@@ -287,12 +308,12 @@ export function InventoryTable() {
       </CardContent>
 
       <CardFooter className="border-t py-4 px-6">
-        <div className="flex justify-between items-center w-full text-sm text-muted-foreground">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full text-sm text-muted-foreground gap-2">
           <div>
             Mostrando {filteredInventory.length} de {inventory.length} ítems
           </div>
           {filteredInventory.length > 0 && (
-            <div>
+            <div className="font-medium">
               Total de ítems:{" "}
               {filteredInventory.reduce((sum, item) => sum + item.stock, 0)}{" "}
               unidades

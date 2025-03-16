@@ -121,13 +121,13 @@ export function AddIncomeModal({ trigger, onSuccess }: AddIncomeModalProps) {
     >
       <DialogTrigger asChild>
         {trigger || (
-          <Button className="bg-green-600 hover:bg-green-700">
+          <Button className="bg-green-600 hover:bg-green-700 w-full sm:w-auto">
             <PlusCircle className="mr-2 h-4 w-4" />
             Agregar Ingreso
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="w-[95vw] max-w-[500px] p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex justify-between items-center">
             <DialogTitle className="text-xl font-bold">
@@ -162,7 +162,7 @@ export function AddIncomeModal({ trigger, onSuccess }: AddIncomeModalProps) {
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="pl-10"
+                className="pl-10 h-10"
                 required
               />
             </div>
@@ -174,7 +174,7 @@ export function AddIncomeModal({ trigger, onSuccess }: AddIncomeModalProps) {
             </Label>
             <div className="relative">
               <Select value={category} onValueChange={setCategory} required>
-                <SelectTrigger id="category" className="w-full">
+                <SelectTrigger id="category" className="w-full h-10">
                   <div className="flex items-center">
                     {category ? (
                       <>
@@ -219,18 +219,19 @@ export function AddIncomeModal({ trigger, onSuccess }: AddIncomeModalProps) {
           </div>
         </form>
 
-        <DialogFooter>
+        <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0 mt-4">
           <Button
             type="button"
             variant="outline"
             onClick={() => setOpen(false)}
             disabled={isSubmitting}
+            className="w-full sm:w-auto"
           >
             Cancelar
           </Button>
           <Button
             type="submit"
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-green-600 hover:bg-green-700 w-full sm:w-auto"
             onClick={handleSubmit}
             disabled={isSubmitting || !amount || !category}
           >

@@ -108,9 +108,9 @@ const EmployeesEdit: React.FC<EmployeesEditProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>Editar Empleado</DialogTitle>
+      <DialogContent className="w-[95vw] max-w-[500px] p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="space-y-2">
+          <DialogTitle className="text-xl">Editar Empleado</DialogTitle>
           <DialogDescription>
             Actualiza los datos del empleado.
           </DialogDescription>
@@ -127,17 +127,27 @@ const EmployeesEdit: React.FC<EmployeesEditProps> = ({
 
         <form className="grid gap-4 py-2" onSubmit={handleSubmit}>
           <div className="grid gap-2">
-            <Label htmlFor="cedula">Cédula</Label>
-            <Input id="cedula" value={formData.cedula} disabled />
+            <Label htmlFor="cedula" className="text-sm font-medium">
+              Cédula
+            </Label>
+            <Input
+              id="cedula"
+              value={formData.cedula}
+              disabled
+              className="h-10 opacity-70"
+            />
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="nombre">Nombre</Label>
+            <Label htmlFor="nombre" className="text-sm font-medium">
+              Nombre
+            </Label>
             <Input
               id="nombre"
               value={formData.nombre}
               onChange={handleChange}
               placeholder="Nombre completo"
+              className="h-10"
             />
             {errores.nombre && (
               <p className="text-red-500 text-sm">{errores.nombre}</p>
@@ -145,14 +155,16 @@ const EmployeesEdit: React.FC<EmployeesEditProps> = ({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="posicion">Posición</Label>
+            <Label htmlFor="posicion" className="text-sm font-medium">
+              Posición
+            </Label>
             <Select
               value={formData.posicion}
               onValueChange={(val) =>
                 setFormData((prev) => ({ ...prev, posicion: val }))
               }
             >
-              <SelectTrigger id="posicion">
+              <SelectTrigger id="posicion" className="h-10">
                 <SelectValue placeholder="Seleccionar Posición" />
               </SelectTrigger>
               <SelectContent>
@@ -179,14 +191,16 @@ const EmployeesEdit: React.FC<EmployeesEditProps> = ({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="departamento">Departamento</Label>
+            <Label htmlFor="departamento" className="text-sm font-medium">
+              Departamento
+            </Label>
             <Select
               value={formData.departamento}
               onValueChange={(val) =>
                 setFormData((prev) => ({ ...prev, departamento: val }))
               }
             >
-              <SelectTrigger id="departamento">
+              <SelectTrigger id="departamento" className="h-10">
                 <SelectValue placeholder="Seleccionar Departamento" />
               </SelectTrigger>
               <SelectContent>
@@ -205,42 +219,52 @@ const EmployeesEdit: React.FC<EmployeesEditProps> = ({
             )}
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="fechaInicio">Fecha de Inicio</Label>
-            <Input
-              id="fechaInicio"
-              type="date"
-              value={formData.fechaInicio}
-              onChange={handleChange}
-            />
-            {errores.fechaInicio && (
-              <p className="text-red-500 text-sm">{errores.fechaInicio}</p>
-            )}
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="fechaInicio" className="text-sm font-medium">
+                Fecha de Inicio
+              </Label>
+              <Input
+                id="fechaInicio"
+                type="date"
+                value={formData.fechaInicio}
+                onChange={handleChange}
+                className="h-10"
+              />
+              {errores.fechaInicio && (
+                <p className="text-red-500 text-sm">{errores.fechaInicio}</p>
+              )}
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="salario" className="text-sm font-medium">
+                Salario
+              </Label>
+              <Input
+                id="salario"
+                type="number"
+                value={formData.salario}
+                onChange={handleChange}
+                placeholder="0.00"
+                className="h-10"
+              />
+              {errores.salario && (
+                <p className="text-red-500 text-sm">{errores.salario}</p>
+              )}
+            </div>
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="salario">Salario</Label>
-            <Input
-              id="salario"
-              type="number"
-              value={formData.salario}
-              onChange={handleChange}
-              placeholder="0.00"
-            />
-            {errores.salario && (
-              <p className="text-red-500 text-sm">{errores.salario}</p>
-            )}
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="status">Estado</Label>
+            <Label htmlFor="status" className="text-sm font-medium">
+              Estado
+            </Label>
             <Select
               value={formData.status}
               onValueChange={(val) =>
                 setFormData((prev) => ({ ...prev, status: val }))
               }
             >
-              <SelectTrigger id="status">
+              <SelectTrigger id="status" className="h-10">
                 <SelectValue placeholder="Seleccionar Estado" />
               </SelectTrigger>
               <SelectContent>
@@ -250,11 +274,20 @@ const EmployeesEdit: React.FC<EmployeesEditProps> = ({
             </Select>
           </div>
 
-          <DialogFooter className="mt-4">
-            <Button variant="outline" type="button" onClick={onClose}>
+          <DialogFooter className="mt-4 flex-col sm:flex-row gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              type="button"
+              onClick={onClose}
+              className="w-full sm:w-auto"
+            >
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full sm:w-auto"
+            >
               {loading ? "Guardando..." : "Actualizar Empleado"}
             </Button>
           </DialogFooter>

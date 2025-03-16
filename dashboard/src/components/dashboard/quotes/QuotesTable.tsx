@@ -209,7 +209,7 @@ export default function QuotesTable() {
               Gestione cotizaciones, clientes y genere reportes.
             </CardDescription>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button onClick={() => setIsModalOpen(true)}>
               <Plus className="mr-2 h-4 w-4" /> Agregar Cotización
             </Button>
@@ -234,7 +234,7 @@ export default function QuotesTable() {
 
       <CardContent className="p-6">
         <div className="mb-6 space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -244,9 +244,9 @@ export default function QuotesTable() {
                 className="pl-9"
               />
             </div>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
               <Select value={clientFilter} onValueChange={setClientFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px]">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="Cliente" />
                 </SelectTrigger>
@@ -260,7 +260,7 @@ export default function QuotesTable() {
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px]">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="Estado" />
                 </SelectTrigger>
@@ -295,13 +295,25 @@ export default function QuotesTable() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="font-semibold">Cliente</TableHead>
-                    <TableHead className="font-semibold">Fecha</TableHead>
-                    <TableHead className="font-semibold">Total</TableHead>
-                    <TableHead className="font-semibold">Estado</TableHead>
-                    <TableHead className="font-semibold">Items</TableHead>
-                    <TableHead className="font-semibold">Creado por</TableHead>
-                    <TableHead className="font-semibold text-right">
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Cliente
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Fecha
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Total
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Estado
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Items
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Creado por
+                    </TableHead>
+                    <TableHead className="font-semibold text-right whitespace-nowrap">
                       Acciones
                     </TableHead>
                   </TableRow>
@@ -309,22 +321,26 @@ export default function QuotesTable() {
                 <TableBody>
                   {filteredQuotes.map((quote) => (
                     <TableRow key={quote.id}>
-                      <TableCell className="font-medium">{quote.id}</TableCell>
-                      <TableCell>{quote.client}</TableCell>
-                      <TableCell>
+                      <TableCell className="font-medium whitespace-nowrap">
+                        {quote.id}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {quote.client}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
                         {new Date(quote.date).toLocaleDateString("es-ES", {
                           year: "numeric",
                           month: "long",
                           day: "numeric",
                         })}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         {new Intl.NumberFormat("es-CR", {
                           style: "currency",
                           currency: "CRC",
                         }).format(quote.total)}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <Badge
                           className={
                             statusColors[quote.status] ||
@@ -334,9 +350,13 @@ export default function QuotesTable() {
                           {quote.status}
                         </Badge>
                       </TableCell>
-                      <TableCell>{quote.items}</TableCell>
-                      <TableCell>{quote.createdBy}</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="max-w-[150px] truncate">
+                        {quote.items}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {quote.createdBy}
+                      </TableCell>
+                      <TableCell className="text-right whitespace-nowrap">
                         <div className="flex justify-end gap-2">
                           <Button
                             variant="outline"
@@ -364,12 +384,12 @@ export default function QuotesTable() {
       </CardContent>
 
       <CardFooter className="border-t py-4 px-6">
-        <div className="flex justify-between items-center w-full text-sm text-muted-foreground">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full text-sm text-muted-foreground gap-2">
           <div>
             Mostrando {filteredQuotes.length} de {quotes.length} cotizaciones
           </div>
           {filteredQuotes.length > 0 && (
-            <div>
+            <div className="font-medium">
               Total:{" "}
               {new Intl.NumberFormat("es-CR", {
                 style: "currency",

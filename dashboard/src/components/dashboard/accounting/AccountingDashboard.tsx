@@ -148,16 +148,16 @@ export function AccountingDashboard() {
 
   return (
     <div className="space-y-6 p-4 md:p-6 bg-background transition-colors duration-200">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             Panel de Finanzas
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Gestiona y visualiza tus finanzas personales
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 items-center">
+        <div className="flex flex-wrap gap-2 items-center w-full sm:w-auto">
           <div className="[&>button]:bg-white [&>button]:text-black [&>button:hover]:bg-gray-100 [&>button_svg]:text-green-500 [&>button]:border-green-500 dark:[&>button]:bg-background dark:[&>button]:text-foreground dark:[&>button:hover]:bg-muted dark:[&>button]:border-green-0">
             <AddIncomeModal onSuccess={() => window.location.reload()} />
           </div>
@@ -185,72 +185,72 @@ export function AccountingDashboard() {
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="overflow-hidden border-l-4 border-l-blue-500 shadow-sm hover:shadow transition-shadow duration-200">
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-2 px-4 pt-4">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Balance Total
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 pb-4">
             <div className="flex justify-between items-center">
-              <div className="text-2xl font-bold text-foreground">
+              <div className="text-xl sm:text-2xl font-bold text-foreground">
                 {formatCurrency(summary.balance)}
               </div>
               <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900">
-                <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="overflow-hidden border-l-4 border-l-green-500 shadow-sm hover:shadow transition-shadow duration-200">
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-2 px-4 pt-4">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Ingresos
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 pb-4">
             <div className="flex justify-between items-center">
-              <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+              <div className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">
                 {formatCurrency(summary.totalIncome)}
               </div>
               <div className="p-2 rounded-full bg-green-100 dark:bg-green-900">
-                <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="overflow-hidden border-l-4 border-l-red-500 shadow-sm hover:shadow transition-shadow duration-200">
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-2 px-4 pt-4">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Egresos
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 pb-4">
             <div className="flex justify-between items-center">
-              <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+              <div className="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400">
                 {formatCurrency(summary.totalExpenses)}
               </div>
               <div className="p-2 rounded-full bg-red-100 dark:bg-red-900">
-                <TrendingDown className="h-5 w-5 text-red-600 dark:text-red-400" />
+                <TrendingDown className="h-4 w-4 sm:h-5 sm:w-5 text-red-600 dark:text-red-400" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="overflow-hidden border-l-4 border-l-purple-500 shadow-sm hover:shadow transition-shadow duration-200">
-          <CardHeader className="pb-2">
+          <CardHeader className="pb-2 px-4 pt-4">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Ahorros
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 pb-4">
             <div className="flex justify-between items-center">
-              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+              <div className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400">
                 {formatCurrency(summary.balance > 0 ? summary.balance : 0)}
               </div>
               <div className="p-2 rounded-full bg-purple-100 dark:bg-purple-900">
-                <Wallet className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600 dark:text-purple-400" />
               </div>
             </div>
           </CardContent>
@@ -258,25 +258,25 @@ export function AccountingDashboard() {
       </div>
 
       <Card className="shadow-sm hover:shadow transition-shadow duration-200">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center justify-between text-foreground">
+        <CardHeader className="pb-2 px-4 pt-4">
+          <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-foreground gap-2">
             <span>Transacciones Recientes</span>
             <Badge
               variant="outline"
-              className="ml-2 bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800"
+              className="self-start sm:self-auto bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800"
             >
               <Clock className="mr-1 h-3 w-3" />
               Últimas 5
             </Badge>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4">
           <div className="space-y-4">
             {transactions.length > 0 ? (
               transactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 transition-colors"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 rounded-lg hover:bg-muted/50 transition-colors gap-2"
                 >
                   <div className="flex items-center gap-3">
                     <Avatar
@@ -299,7 +299,7 @@ export function AccountingDashboard() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end">
+                  <div className="flex flex-row sm:flex-col items-start sm:items-end justify-between sm:justify-center mt-2 sm:mt-0">
                     <span
                       className={`font-medium ${
                         transaction.type === "income"
@@ -323,11 +323,11 @@ export function AccountingDashboard() {
             )}
           </div>
         </CardContent>
-        <CardFooter className="pt-0 border-t flex justify-center">
+        <CardFooter className="pt-0 border-t flex justify-center px-4 py-3">
           <Button
             variant="ghost"
             size="sm"
-            className="text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground w-full sm:w-auto"
           >
             Ver todas las transacciones
             <ArrowUpRight className="ml-1 h-3 w-3" />

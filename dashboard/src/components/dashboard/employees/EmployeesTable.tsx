@@ -148,22 +148,25 @@ export default function EmployeesTable() {
   return (
     <Card className="shadow-md">
       <CardHeader className="border-b">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <CardTitle className="text-2xl font-bold">Empleados</CardTitle>
             <CardDescription>
               Gestione empleados, sus posiciones, departamentos y desempeño.
             </CardDescription>
           </div>
-          <Button onClick={() => setIsModalOpen(true)}>
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="self-start sm:self-auto"
+          >
             <Plus className="mr-2 h-4 w-4" /> Agregar Empleado
           </Button>
         </div>
       </CardHeader>
 
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <div className="mb-6 space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -173,12 +176,12 @@ export default function EmployeesTable() {
                 className="pl-9"
               />
             </div>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
               <Select
                 value={departmentFilter}
                 onValueChange={setDepartmentFilter}
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px]">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="Departamento" />
                 </SelectTrigger>
@@ -192,7 +195,7 @@ export default function EmployeesTable() {
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px]">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="Estado" />
                 </SelectTrigger>
@@ -222,18 +225,28 @@ export default function EmployeesTable() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="font-semibold">Nombre</TableHead>
-                    <TableHead className="font-semibold">Cédula</TableHead>
-                    <TableHead className="font-semibold">Posición</TableHead>
-                    <TableHead className="font-semibold">
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Nombre
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Cédula
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Posición
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
                       Departamento
                     </TableHead>
-                    <TableHead className="font-semibold">Estado</TableHead>
-                    <TableHead className="font-semibold">
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Estado
+                    </TableHead>
+                    <TableHead className="font-semibold whitespace-nowrap">
                       Fecha de Inicio
                     </TableHead>
-                    <TableHead className="font-semibold">Salario</TableHead>
-                    <TableHead className="font-semibold text-right">
+                    <TableHead className="font-semibold whitespace-nowrap">
+                      Salario
+                    </TableHead>
+                    <TableHead className="font-semibold text-right whitespace-nowrap">
                       Acciones
                     </TableHead>
                   </TableRow>
@@ -241,12 +254,16 @@ export default function EmployeesTable() {
                 <TableBody>
                   {filteredEmployees.map((employee) => (
                     <TableRow key={employee.cedula}>
-                      <TableCell className="font-medium">
+                      <TableCell className="font-medium max-w-[150px] truncate">
                         {employee.nombre}
                       </TableCell>
-                      <TableCell>{employee.cedula}</TableCell>
-                      <TableCell>{employee.posicion}</TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {employee.cedula}
+                      </TableCell>
+                      <TableCell className="max-w-[120px] truncate">
+                        {employee.posicion}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <Badge
                           className={
                             departmentColors[employee.departamento] ||
@@ -256,7 +273,7 @@ export default function EmployeesTable() {
                           {employee.departamento}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <Badge
                           className={
                             employee.status === "Activo"
@@ -267,7 +284,7 @@ export default function EmployeesTable() {
                           {employee.status}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         {new Date(employee.fechaInicio).toLocaleDateString(
                           "es-ES",
                           {
@@ -277,13 +294,13 @@ export default function EmployeesTable() {
                           }
                         )}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         {new Intl.NumberFormat("es-CR", {
                           style: "currency",
                           currency: "CRC",
                         }).format(employee.salario)}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right whitespace-nowrap">
                         <div className="flex justify-end gap-2">
                           <Button
                             variant="outline"
@@ -311,12 +328,12 @@ export default function EmployeesTable() {
       </CardContent>
 
       <CardFooter className="border-t py-4 px-6">
-        <div className="flex justify-between items-center w-full text-sm text-muted-foreground">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full text-sm text-muted-foreground gap-2">
           <div>
             Mostrando {filteredEmployees.length} de {employees.length} empleados
           </div>
           {filteredEmployees.length > 0 && (
-            <div>
+            <div className="font-medium">
               Total de salarios:{" "}
               {new Intl.NumberFormat("es-CR", {
                 style: "currency",
