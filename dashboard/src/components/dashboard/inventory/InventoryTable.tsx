@@ -44,11 +44,9 @@ const statusColors: Record<string, string> = {
 };
 
 const categoryColors: Record<string, string> = {
-  Herramientas: "bg-blue-500 text-white",
-  Materiales: "bg-purple-500 text-white",
-  Repuestos: "bg-yellow-500 text-black",
-  Consumibles: "bg-teal-500 text-white",
-  Equipos: "bg-indigo-500 text-white",
+  "MAQUINARIA Y EQUIPO": "bg-blue-500 text-white",
+  "MOBILIARIO Y EQUIPO": "bg-purple-500 text-white",
+  VEHICULOS: "bg-yellow-500 text-black",
 };
 
 export function InventoryTable() {
@@ -88,23 +86,19 @@ export function InventoryTable() {
   const filterInventory = () => {
     let filtered = [...inventory];
 
-    // Aplicar filtro de búsqueda
     if (searchQuery) {
       filtered = filtered.filter(
         (item) =>
           item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.location.toLowerCase().includes(searchQuery.toLowerCase())
+          item.category.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    // Aplicar filtro de categoría
     if (categoryFilter !== "todos") {
       filtered = filtered.filter((item) => item.category === categoryFilter);
     }
 
-    // Aplicar filtro de estado
     if (statusFilter !== "todos") {
       filtered = filtered.filter((item) => item.status === statusFilter);
     }
@@ -167,7 +161,7 @@ export function InventoryTable() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Buscar por código, nombre, categoría o ubicación..."
+                placeholder="Buscar por código, nombre o categoría..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9"
@@ -232,13 +226,13 @@ export function InventoryTable() {
                       Categoría
                     </TableHead>
                     <TableHead className="font-semibold whitespace-nowrap">
-                      Stock
+                      Cantidad
                     </TableHead>
                     <TableHead className="font-semibold whitespace-nowrap">
-                      Ubicación
+                      Precio Unitario
                     </TableHead>
                     <TableHead className="font-semibold whitespace-nowrap">
-                      Estado
+                      Total
                     </TableHead>
                     <TableHead className="font-semibold text-right whitespace-nowrap">
                       Acciones
@@ -265,20 +259,13 @@ export function InventoryTable() {
                         </Badge>
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
-                        {item.stock} {item.unit}
-                      </TableCell>
-                      <TableCell className="max-w-[100px] truncate">
-                        {item.location}
+                        {item.quantity}
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
-                        <Badge
-                          className={
-                            statusColors[item.status] ||
-                            "bg-gray-500 text-white"
-                          }
-                        >
-                          {item.status}
-                        </Badge>
+                        {item.pricePerUnit}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {item.total}
                       </TableCell>
                       <TableCell className="text-right whitespace-nowrap">
                         <div className="flex justify-end gap-2">
@@ -315,7 +302,7 @@ export function InventoryTable() {
           {filteredInventory.length > 0 && (
             <div className="font-medium">
               Total de ítems:{" "}
-              {filteredInventory.reduce((sum, item) => sum + item.stock, 0)}{" "}
+              {filteredInventory.reduce((sum, item) => sum + item.quantity, 0)}{" "}
               unidades
             </div>
           )}

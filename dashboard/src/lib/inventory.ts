@@ -11,17 +11,11 @@ import {
 
 export interface InventoryItem {
   id: string;
+  quantity: number;
   name: string;
   category: string;
-  stock: number;
-  minStock: number;
-  maxStock: number;
-  unit: string;
-  location: string;
-  supplier: string;
-  status: string;
-  lastUsed: string;
-  expiryDate?: string | null;
+  pricePerUnit: number;
+  total: number;
 }
 
 export const addInventoryItem = async (item: InventoryItem) => {

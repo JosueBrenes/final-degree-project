@@ -36,15 +36,9 @@ export default function AddItemModal({
     id: "",
     name: "",
     category: "",
-    stock: 0,
-    minStock: 0,
-    maxStock: 0,
-    unit: "",
-    location: "",
-    supplier: "",
-    status: "Disponible",
-    lastUsed: new Date().toISOString().split("T")[0],
-    expiryDate: "",
+    quantity: 0,
+    pricePerUnit: 0,
+    total: 0,
   });
 
   const [loading, setLoading] = useState(false);
@@ -63,6 +57,10 @@ export default function AddItemModal({
       alert("Por favor, completa todos los campos obligatorios.");
       return;
     }
+
+    // Recalcular el total
+    const total = (formData.quantity || 0) * (formData.pricePerUnit || 0);
+    setFormData((prev) => ({ ...prev, total }));
 
     setLoading(true);
     try {
@@ -120,66 +118,42 @@ export default function AddItemModal({
                 <SelectValue placeholder="Selecciona una categoría" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Herramientas">Herramientas</SelectItem>
-                <SelectItem value="Lubricantes">Lubricantes</SelectItem>
-                <SelectItem value="Tornillería">Tornillería</SelectItem>
-                <SelectItem value="Eléctricos">Eléctricos</SelectItem>
-                <SelectItem value="Seguridad">Seguridad</SelectItem>
-                <SelectItem value="Motores">Motores</SelectItem>
+                <SelectContent>
+                  <SelectItem value="todos">Todas las categorías</SelectItem>
+                  <SelectItem value="MAQUINARIA Y EQUIPO">
+                    MAQUINARIA Y EQUIPO
+                  </SelectItem>
+                  <SelectItem value="MOBILIARIO Y EQUIPO">
+                    MOBILIARIO Y EQUIPO
+                  </SelectItem>
+                  <SelectItem value="VEHICULOS">VEHICULOS</SelectItem>
+                </SelectContent>
               </SelectContent>
             </Select>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-2">
             <div className="grid gap-2">
-              <Label htmlFor="stock" className="text-sm font-medium">
-                Stock
+              <Label htmlFor="quantity" className="text-sm font-medium">
+                Cantidad
               </Label>
               <Input
-                id="stock"
+                id="quantity"
                 type="number"
-                value={formData.stock}
+                value={formData.quantity}
                 onChange={handleChange}
                 placeholder="0"
                 className="h-10"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="unit" className="text-sm font-medium">
-                Unidad
+              <Label htmlFor="pricePerUnit" className="text-sm font-medium">
+                Precio Unitario
               </Label>
               <Input
-                id="unit"
-                value={formData.unit}
-                onChange={handleChange}
-                placeholder="Ej: Unidad, Litro, Metro"
-                className="h-10"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-2">
-            <div className="grid gap-2">
-              <Label htmlFor="minStock" className="text-sm font-medium">
-                Stock Mínimo
-              </Label>
-              <Input
-                id="minStock"
+                id="pricePerUnit"
                 type="number"
-                value={formData.minStock}
-                onChange={handleChange}
-                placeholder="0"
-                className="h-10"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="maxStock" className="text-sm font-medium">
-                Stock Máximo
-              </Label>
-              <Input
-                id="maxStock"
-                type="number"
-                value={formData.maxStock}
+                value={formData.pricePerUnit}
                 onChange={handleChange}
                 placeholder="0"
                 className="h-10"
@@ -188,40 +162,14 @@ export default function AddItemModal({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="location" className="text-sm font-medium">
-              Ubicación
+            <Label htmlFor="total" className="text-sm font-medium">
+              Total
             </Label>
             <Input
-              id="location"
-              value={formData.location}
-              onChange={handleChange}
-              placeholder="Ej: A-12-3"
-              className="h-10"
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="supplier" className="text-sm font-medium">
-              Proveedor
-            </Label>
-            <Input
-              id="supplier"
-              value={formData.supplier}
-              onChange={handleChange}
-              placeholder="Ej: Suministros S.A."
-              className="h-10"
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="expiryDate" className="text-sm font-medium">
-              Fecha de Expiración (Opcional)
-            </Label>
-            <Input
-              id="expiryDate"
-              type="date"
-              value={formData.expiryDate || ""}
-              onChange={handleChange}
+              id="total"
+              type="number"
+              value={formData.total}
+              disabled
               className="h-10"
             />
           </div>

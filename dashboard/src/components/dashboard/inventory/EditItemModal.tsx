@@ -55,15 +55,51 @@ export default function EditItemModal({
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="stock" className="text-sm font-medium">
-              Stock
+            <Label htmlFor="quantity" className="text-sm font-medium">
+              Cantidad
             </Label>
             <Input
-              id="stock"
+              id="quantity"
               type="number"
-              value={formData.stock}
+              value={formData.quantity}
               onChange={handleChange}
               className="h-10"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="category" className="text-sm font-medium">
+              Categoría
+            </Label>
+            <Input
+              id="category"
+              value={formData.category}
+              onChange={handleChange}
+              className="h-10"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="pricePerUnit" className="text-sm font-medium">
+              Precio Unitario
+            </Label>
+            <Input
+              id="pricePerUnit"
+              type="number"
+              value={formData.pricePerUnit}
+              onChange={handleChange}
+              className="h-10"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="total" className="text-sm font-medium">
+              Total
+            </Label>
+            <Input
+              id="total"
+              type="number"
+              value={formData.total}
+              onChange={handleChange}
+              className="h-10"
+              disabled
             />
           </div>
           <Button
