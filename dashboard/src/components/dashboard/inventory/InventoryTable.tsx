@@ -217,9 +217,6 @@ export function InventoryTable() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="font-semibold whitespace-nowrap">
-                      Código
-                    </TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">
                       Nombre
                     </TableHead>
                     <TableHead className="font-semibold whitespace-nowrap">
@@ -242,9 +239,6 @@ export function InventoryTable() {
                 <TableBody>
                   {filteredInventory.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell className="whitespace-nowrap">
-                        {item.id}
-                      </TableCell>
                       <TableCell className="font-medium max-w-[150px] truncate">
                         {item.name}
                       </TableCell>
