@@ -55,6 +55,9 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
   });
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const localToday = today.toISOString().split("T")[0];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -166,6 +169,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
               value={formData.date}
               onChange={handleChange}
               className="h-10"
+              min={localToday}
             />
             {errores.date && (
               <p className="text-red-500 text-sm">{errores.date}</p>

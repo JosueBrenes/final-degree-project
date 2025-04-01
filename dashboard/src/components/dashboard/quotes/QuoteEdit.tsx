@@ -67,6 +67,9 @@ const QuoteEdit: React.FC<QuoteEditProps> = ({
   });
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const localToday = today.toISOString().split("T")[0];
 
   useEffect(() => {
     if (quote) {
@@ -187,6 +190,7 @@ const QuoteEdit: React.FC<QuoteEditProps> = ({
               value={formData.date}
               onChange={handleChange}
               className="h-10"
+              min={localToday}
             />
             {errores.date && (
               <p className="text-red-500 text-sm">{errores.date}</p>

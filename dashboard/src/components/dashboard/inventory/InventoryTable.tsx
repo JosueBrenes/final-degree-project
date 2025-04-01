@@ -148,7 +148,7 @@ export function InventoryTable() {
           </div>
           <Button
             onClick={() => setAddModalOpen(true)}
-            className="self-start sm:self-auto"
+            className="self-start sm:self-auto bg-blue-600"
           >
             <Plus className="mr-2 h-4 w-4" /> Agregar Ítem
           </Button>

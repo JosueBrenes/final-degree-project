@@ -210,8 +210,11 @@ export default function QuotesTable() {
             </CardDescription>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button onClick={() => setIsModalOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" /> Agregar Cotización
+            <Button
+              className="bg-blue-700 text-white hover:bg-blue-800"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <Plus className="mr-2 h-4 w-4 " /> Agregar Cotización
             </Button>
             <Button
               onClick={exportToExcel}

@@ -60,6 +60,9 @@ const EmployeesEdit: React.FC<EmployeesEditProps> = ({
   });
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const localToday = today.toISOString().split("T")[0];
 
   useEffect(() => {
     if (employee) {
@@ -230,6 +233,7 @@ const EmployeesEdit: React.FC<EmployeesEditProps> = ({
                 value={formData.fechaInicio}
                 onChange={handleChange}
                 className="h-10"
+                min={localToday}
               />
               {errores.fechaInicio && (
                 <p className="text-red-500 text-sm">{errores.fechaInicio}</p>

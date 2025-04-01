@@ -157,7 +157,7 @@ export default function EmployeesTable() {
           </div>
           <Button
             onClick={() => setIsModalOpen(true)}
-            className="self-start sm:self-auto"
+            className="self-start bg-blue-600 sm:self-auto"
           >
             <Plus className="mr-2 h-4 w-4" /> Agregar Empleado
           </Button>

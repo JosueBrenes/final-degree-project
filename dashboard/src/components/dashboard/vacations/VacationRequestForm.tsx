@@ -34,6 +34,9 @@ export function VacationRequestForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [requestedDays, setRequestedDays] = useState<number>(0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const localToday = today.toISOString().split("T")[0];
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -169,6 +172,7 @@ export function VacationRequestForm() {
                   }
                   required
                   className="text-black [&::-webkit-calendar-picker-indicator]:invert h-10"
+                  min={localToday}
                 />
               </div>
               <div className="grid gap-2">
@@ -182,6 +186,7 @@ export function VacationRequestForm() {
                   }
                   required
                   className="text-black [&::-webkit-calendar-picker-indicator]:invert h-10"
+                  min={localToday}
                 />
               </div>
             </div>
@@ -218,7 +223,11 @@ export function VacationRequestForm() {
             </div>
           )}
 
-          <Button type="submit" disabled={loading} className="w-full">
+          <Button
+            type="submit"
+            disabled={loading}
+            className=" bg-blue-600 w-full"
+          >
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

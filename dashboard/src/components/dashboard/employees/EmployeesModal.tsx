@@ -58,6 +58,10 @@ const EmployeesModal: React.FC<EmployeesModalProps> = ({
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const localToday = today.toISOString().split("T")[0];
+
   // Formatear la cédula automáticamente en X-XXXX-XXXX
   const formatCedula = (value: string) => {
     const cleaned = value.replace(/\D/g, ""); // Eliminar caracteres no numéricos
@@ -265,7 +269,9 @@ const EmployeesModal: React.FC<EmployeesModalProps> = ({
                 value={formData.fechaInicio}
                 onChange={handleChange}
                 className="h-10"
+                min={localToday}
               />
+
               {errores.fechaInicio && (
                 <p className="text-red-500 text-sm">{errores.fechaInicio}</p>
               )}

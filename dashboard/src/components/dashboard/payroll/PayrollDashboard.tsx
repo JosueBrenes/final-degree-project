@@ -13,80 +13,86 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default function PayrollDashboard() {
-  const [payroll] = useState([
+export default function PanelDePlanilla() {
+  const [planilla] = useState([
     {
       id: "EMP-001",
-      name: "Carlos Pérez",
-      position: "General Manager",
-      salary: 5000,
-      bonus: 200,
-      deductions: 300,
-      netPay: 4900,
+      nombre: "Carlos Pérez",
+      puesto: "Gerente General",
+      salario: 5000,
+      bonificacion: 200,
+      deducciones: 300,
+      pagoNeto: 4900,
     },
     {
       id: "EMP-002",
-      name: "María López",
-      position: "Administrative Manager",
-      salary: 4000,
-      bonus: 150,
-      deductions: 200,
-      netPay: 3950,
+      nombre: "María López",
+      puesto: "Gerente Administrativa",
+      salario: 4000,
+      bonificacion: 150,
+      deducciones: 200,
+      pagoNeto: 3950,
     },
     {
       id: "EMP-003",
-      name: "Jorge Castillo",
-      position: "Operations Manager",
-      salary: 4500,
-      bonus: 250,
-      deductions: 300,
-      netPay: 4450,
+      nombre: "Jorge Castillo",
+      puesto: "Gerente de Operaciones",
+      salario: 4500,
+      bonificacion: 250,
+      deducciones: 300,
+      pagoNeto: 4450,
     },
   ]);
 
-  const totalSalary = payroll.reduce((acc, emp) => acc + emp.salary, 0);
-  const totalBonus = payroll.reduce((acc, emp) => acc + emp.bonus, 0);
-  const totalDeductions = payroll.reduce((acc, emp) => acc + emp.deductions, 0);
-  const totalNetPay = payroll.reduce((acc, emp) => acc + emp.netPay, 0);
+  const totalSalario = planilla.reduce((acc, emp) => acc + emp.salario, 0);
+  const totalBonificaciones = planilla.reduce(
+    (acc, emp) => acc + emp.bonificacion,
+    0
+  );
+  const totalDeducciones = planilla.reduce(
+    (acc, emp) => acc + emp.deducciones,
+    0
+  );
+  const totalPagoNeto = planilla.reduce((acc, emp) => acc + emp.pagoNeto, 0);
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Payroll Summary</CardTitle>
+          <CardTitle>Resumen de Planilla</CardTitle>
         </CardHeader>
         <CardContent>
           <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="flex flex-col">
               <dt className="text-sm font-medium text-muted-foreground">
-                Total Salary
+                Salario Total
               </dt>
               <dd className="text-2xl font-semibold">
-                ${totalSalary.toFixed(2)}
+                ${totalSalario.toFixed(2)}
               </dd>
             </div>
             <div className="flex flex-col">
               <dt className="text-sm font-medium text-muted-foreground">
-                Total Bonuses
+                Bonificaciones Totales
               </dt>
               <dd className="text-2xl font-semibold">
-                ${totalBonus.toFixed(2)}
+                ${totalBonificaciones.toFixed(2)}
               </dd>
             </div>
             <div className="flex flex-col">
               <dt className="text-sm font-medium text-muted-foreground">
-                Total Deductions
+                Deducciones Totales
               </dt>
               <dd className="text-2xl font-semibold">
-                ${totalDeductions.toFixed(2)}
+                ${totalDeducciones.toFixed(2)}
               </dd>
             </div>
             <div className="flex flex-col">
               <dt className="text-sm font-medium text-muted-foreground">
-                Total Net Pay
+                Pago Neto Total
               </dt>
               <dd className="text-2xl font-semibold">
-                ${totalNetPay.toFixed(2)}
+                ${totalPagoNeto.toFixed(2)}
               </dd>
             </div>
           </dl>
@@ -94,52 +100,52 @@ export default function PayrollDashboard() {
       </Card>
 
       <div className="flex flex-wrap justify-center gap-4">
-        <Button className="w-48">
-          <Calculator className="mr-2 h-4 w-4" /> Calculate Payroll
+        <Button className="w-48 bg-blue-600">
+          <Calculator className="mr-2 h-4 w-4 " /> Calcular Planilla
         </Button>
         <Button variant="destructive" className="w-48">
-          <FileText className="mr-2 h-4 w-4" /> Generate PDF
+          <FileText className="mr-2 h-4 w-4" /> Generar PDF
         </Button>
         <Button variant="secondary" className="w-48">
-          <Download className="mr-2 h-4 w-4" /> Export to Excel
+          <Download className="mr-2 h-4 w-4" /> Exportar a Excel
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Employee Payroll Details</CardTitle>
+          <CardTitle>Detalles de Planilla por Empleado</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Employee ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Position</TableHead>
-                <TableHead>Salary</TableHead>
-                <TableHead>Bonus</TableHead>
-                <TableHead>Deductions</TableHead>
-                <TableHead>Net Pay</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>ID Empleado</TableHead>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Puesto</TableHead>
+                <TableHead>Salario</TableHead>
+                <TableHead>Bonificación</TableHead>
+                <TableHead>Deducciones</TableHead>
+                <TableHead>Pago Neto</TableHead>
+                <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {payroll.map((employee) => (
-                <TableRow key={employee.id}>
-                  <TableCell className="font-medium">{employee.id}</TableCell>
-                  <TableCell>{employee.name}</TableCell>
-                  <TableCell>{employee.position}</TableCell>
-                  <TableCell>${employee.salary.toFixed(2)}</TableCell>
-                  <TableCell>${employee.bonus.toFixed(2)}</TableCell>
-                  <TableCell>${employee.deductions.toFixed(2)}</TableCell>
+              {planilla.map((empleado) => (
+                <TableRow key={empleado.id}>
+                  <TableCell className="font-medium">{empleado.id}</TableCell>
+                  <TableCell>{empleado.nombre}</TableCell>
+                  <TableCell>{empleado.puesto}</TableCell>
+                  <TableCell>${empleado.salario.toFixed(2)}</TableCell>
+                  <TableCell>${empleado.bonificacion.toFixed(2)}</TableCell>
+                  <TableCell>${empleado.deducciones.toFixed(2)}</TableCell>
                   <TableCell className="font-bold">
-                    ${employee.netPay.toFixed(2)}
+                    ${empleado.pagoNeto.toFixed(2)}
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
                       variant="ghost"
                       size="icon"
-                      title="Download Receipt"
+                      title="Descargar Recibo"
                     >
                       <Download className="h-4 w-4" />
                     </Button>
