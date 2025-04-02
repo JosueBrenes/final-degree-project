@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { useState } from "react";
 import { X } from "lucide-react";
 import {
   Dialog,
@@ -18,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 interface EmployeesModalProps {
   isOpen: boolean;
@@ -25,6 +27,8 @@ interface EmployeesModalProps {
 }
 
 const EmployeesModal: React.FC<EmployeesModalProps> = ({ isOpen, onClose }) => {
+  const [isDuplicate, setIsDuplicate] = useState(false);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
@@ -40,6 +44,14 @@ const EmployeesModal: React.FC<EmployeesModalProps> = ({ isOpen, onClose }) => {
             <span className="sr-only">Close</span>
           </Button>
         </DialogHeader>
+
+        {isDuplicate && (
+          <Alert variant="destructive">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>Employee already exists.</AlertDescription>
+          </Alert>
+        )}
+
         <form className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="name">Name</Label>
