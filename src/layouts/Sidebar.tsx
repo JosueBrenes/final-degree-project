@@ -160,9 +160,14 @@ const navigationCategories = [
     items: [
       {
         path: "/dashboard/accounting",
-        label: "Contabilidad",
+        label: "Facturas",
         icon: "Building",
         key: "accounting",
+        subItems: [
+          { path: "/dashboard/accounting", label: "Facturas" },
+          { path: "/dashboard/categorias", label: "Categorias" },
+          { path: "/dashboard/proyectos", label: "Proyectos" },
+        ],
       },
       {
         path: "/dashboard/reports",

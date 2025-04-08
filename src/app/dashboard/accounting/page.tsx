@@ -1,10 +1,10 @@
-import { AccountingDashboard } from "@/components/dashboard/accounting/AccountingDashboard";
+import InvoicesTable from "@/components/dashboard/facturas/InvoicesTable";
 import { Wrapper } from "@/components/utils/Wrapper";
 
 const AccountingPage = () => {
   return (
     <Wrapper>
-      <AccountingDashboard />
+      <InvoicesTable />
     </Wrapper>
   );
 };
