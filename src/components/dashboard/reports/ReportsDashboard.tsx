@@ -18,6 +18,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  Cell,
 } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
@@ -537,11 +538,11 @@ export default function ReportesPage() {
   const chartConfig = {
     general: {
       label: "Resumen General",
-      color: "hsl(var(--primary))",
+      color: "#3b82f6",
     },
     value: {
       label: "Valor",
-      color: "hsl(var(--primary))",
+      color: "#3b82f6",
     },
   };
 
@@ -566,7 +567,7 @@ export default function ReportesPage() {
 
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0 p-4 mb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
             Panel de Reportes
@@ -575,6 +576,13 @@ export default function ReportesPage() {
             Visualización de métricas y estadísticas clave de la empresa
           </p>
         </div>
+        <Button
+          onClick={() => setRefreshData((prev) => prev + 1)}
+          variant="outline"
+          className="border-blue-500 text-blue-700 hover:bg-blue-50"
+        >
+          Actualizar Datos
+        </Button>
       </div>
 
       <Tabs
@@ -582,24 +590,39 @@ export default function ReportesPage() {
         className="w-full"
         onValueChange={(value) => setActiveTab(value)}
       >
-        <TabsList className="grid grid-cols-2 md:grid-cols-5 mb-6 w-full">
-          <TabsTrigger value="general" className="flex items-center gap-2">
+        <TabsList className="grid grid-cols-2 md:grid-cols-5 mb-6 w-full bg-gradient-to-r from-gray-100 to-gray-200 p-1 rounded-lg">
+          <TabsTrigger
+            value="general"
+            className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-md"
+          >
             <BarChart3 className="h-4 w-4" />
             <span className="hidden sm:inline">General</span>
           </TabsTrigger>
-          <TabsTrigger value="empleados" className="flex items-center gap-2">
+          <TabsTrigger
+            value="empleados"
+            className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-md"
+          >
             <Users className="h-4 w-4" />
             <span className="hidden sm:inline">Empleados</span>
           </TabsTrigger>
-          <TabsTrigger value="inventario" className="flex items-center gap-2">
+          <TabsTrigger
+            value="inventario"
+            className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-md"
+          >
             <Package className="h-4 w-4" />
             <span className="hidden sm:inline">Inventario</span>
           </TabsTrigger>
-          <TabsTrigger value="facturacion" className="flex items-center gap-2">
+          <TabsTrigger
+            value="facturacion"
+            className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-md"
+          >
             <Receipt className="h-4 w-4" />
             <span className="hidden sm:inline">Facturación</span>
           </TabsTrigger>
-          <TabsTrigger value="finanzas" className="flex items-center gap-2">
+          <TabsTrigger
+            value="finanzas"
+            className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-md"
+          >
             <Wallet className="h-4 w-4" />
             <span className="hidden sm:inline">Finanzas</span>
           </TabsTrigger>
@@ -609,9 +632,8 @@ export default function ReportesPage() {
           <div className="flex justify-end mb-4">
             <Button
               onClick={handleExportToPDF}
-              variant="outline"
               size="sm"
-              className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+              className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white border-none shadow-md hover:shadow-lg transition-all duration-200"
             >
               <FileText className="mr-2 h-4 w-4" />
               Exportar Reporte General
@@ -641,24 +663,29 @@ export default function ReportesPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <Users className="h-5 w-5 text-muted-foreground" />
-                      <div className="text-2xl font-bold">
+                      <div className="bg-blue-100 p-2 rounded-full">
+                        <Users className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div className="text-2xl font-bold text-blue-600">
                         {formatNumber(data.empleados)}
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-                <Card>
+
+                <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">
+                    <CardTitle className="text-sm font-medium text-purple-700">
                       Inventario
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <Package className="h-5 w-5 text-muted-foreground" />
+                      <div className="bg-purple-200 p-2 rounded-full">
+                        <Package className="h-5 w-5 text-purple-600" />
+                      </div>
                       <div
-                        className="text-2xl font-bold"
+                        className="text-2xl font-bold text-purple-600"
                         title={data.totalInventario.toLocaleString()}
                       >
                         {formatNumber(data.totalInventario)}
@@ -666,30 +693,56 @@ export default function ReportesPage() {
                     </div>
                   </CardContent>
                 </Card>
-                <Card>
+
+                <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">
+                    <CardTitle className="text-sm font-medium text-amber-700">
                       Facturación
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <Receipt className="h-5 w-5 text-muted-foreground" />
-                      <div className="text-2xl font-bold">
+                      <div className="bg-amber-200 p-2 rounded-full">
+                        <Receipt className="h-5 w-5 text-amber-600" />
+                      </div>
+                      <div className="text-2xl font-bold text-amber-600">
                         ₡{formatNumber(data.facturado, true)}
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-                <Card>
+
+                <Card
+                  className={`bg-gradient-to-br ${
+                    data.balance >= 0
+                      ? "from-emerald-50 to-emerald-100 border-emerald-200"
+                      : "from-rose-50 to-rose-100 border-rose-200"
+                  }`}
+                >
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium">
+                    <CardTitle
+                      className={`text-sm font-medium ${
+                        data.balance >= 0 ? "text-emerald-700" : "text-rose-700"
+                      }`}
+                    >
                       Balance
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <Wallet className="h-5 w-5 text-muted-foreground" />
+                      <div
+                        className={`${
+                          data.balance >= 0 ? "bg-emerald-200" : "bg-rose-200"
+                        } p-2 rounded-full`}
+                      >
+                        <Wallet
+                          className={`h-5 w-5 ${
+                            data.balance >= 0
+                              ? "text-emerald-600"
+                              : "text-rose-600"
+                          }`}
+                        />
+                      </div>
                       <div className="flex items-center">
                         {data.balance >= 0 ? (
                           <ArrowUpIcon className="mr-1 h-4 w-4 text-emerald-500" />
@@ -755,11 +808,34 @@ export default function ReportesPage() {
                           return null;
                         }}
                       />
-                      <Bar
-                        dataKey="value"
-                        fill="hsl(var(--primary))"
-                        radius={[4, 4, 0, 0]}
-                      />
+                      <Bar dataKey="value" radius={[4, 4, 0, 0]} fill="#8884d8">
+                        {resumen.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={
+                              index === 0
+                                ? "#3b82f6"
+                                : // azul para empleados
+                                index === 1
+                                ? "#8b5cf6"
+                                : // púrpura para vacaciones
+                                index === 2
+                                ? "#f59e0b"
+                                : // ámbar para horas extras
+                                index === 3
+                                ? "#10b981"
+                                : // esmeralda para inventario
+                                index === 4
+                                ? "#f43f5e"
+                                : // rosa para facturado
+                                index === 5
+                                ? "#06b6d4"
+                                : // cyan para ingresos
+                                  "#ef4444" // rojo para egresos
+                            }
+                          />
+                        ))}
+                      </Bar>
                     </BarChart>
                   </ResponsiveContainer>
                 </ChartContainer>
@@ -772,19 +848,20 @@ export default function ReportesPage() {
           <div className="flex justify-end mb-4">
             <Button
               onClick={handleExportToPDF}
-              variant="outline"
               size="sm"
-              className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+              className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white border-none shadow-md hover:shadow-lg transition-all duration-200"
             >
               <FileText className="mr-2 h-4 w-4" />
               Exportar Reporte de Empleados
             </Button>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
-            <Card>
+            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-md hover:shadow-lg transition-all duration-200">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-blue-700">
+                  <div className="bg-blue-200 p-2 rounded-full">
+                    <Users className="h-5 w-5 text-blue-600" />
+                  </div>
                   Total de Empleados
                 </CardTitle>
               </CardHeader>
@@ -793,7 +870,7 @@ export default function ReportesPage() {
                   <Skeleton className="h-10 w-full" />
                 ) : (
                   <div
-                    className="text-3xl font-bold"
+                    className="text-3xl font-bold text-blue-600"
                     title={data.empleados.toLocaleString()}
                   >
                     {formatNumber(data.empleados)}
@@ -801,7 +878,7 @@ export default function ReportesPage() {
                 )}
               </CardContent>
               <CardFooter>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-blue-500">
                   Número total de empleados activos
                 </p>
               </CardFooter>
@@ -853,9 +930,8 @@ export default function ReportesPage() {
           <div className="flex justify-end mb-4">
             <Button
               onClick={handleExportToPDF}
-              variant="outline"
               size="sm"
-              className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+              className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white border-none shadow-md hover:shadow-lg transition-all duration-200"
             >
               <FileText className="mr-2 h-4 w-4" />
               Exportar Reporte de Inventario
@@ -914,9 +990,8 @@ export default function ReportesPage() {
           <div className="flex justify-end mb-4">
             <Button
               onClick={handleExportToPDF}
-              variant="outline"
               size="sm"
-              className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+              className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white border-none shadow-md hover:shadow-lg transition-all duration-200"
             >
               <FileText className="mr-2 h-4 w-4" />
               Exportar Reporte de Facturación
@@ -996,9 +1071,8 @@ export default function ReportesPage() {
           <div className="flex justify-end mb-4">
             <Button
               onClick={handleExportToPDF}
-              variant="outline"
               size="sm"
-              className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+              className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white border-none shadow-md hover:shadow-lg transition-all duration-200"
             >
               <FileText className="mr-2 h-4 w-4" />
               Exportar Reporte Financiero
@@ -1028,7 +1102,7 @@ export default function ReportesPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-none shadow-sm"
                     >
                       <PlusCircle className="h-4 w-4" />
                       <span className="hidden sm:inline">Agregar</span>
@@ -1136,7 +1210,7 @@ export default function ReportesPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-none shadow-sm"
                     >
                       <PlusCircle className="h-4 w-4" />
                       <span className="hidden sm:inline">Agregar</span>
