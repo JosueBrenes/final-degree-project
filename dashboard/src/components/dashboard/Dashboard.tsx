@@ -128,16 +128,6 @@ export default function Dashboard() {
 
   return (
     <div className="flex-1 overflow-auto relative">
-      {!chatOpen && (
-        <Button
-          onClick={() => setChatOpen(true)}
-          className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg"
-          size="icon"
-        >
-          <MessageSquare className="h-6 w-6" />
-        </Button>
-      )}
-
       {chatOpen && (
         <Card className="fixed bottom-6 right-6 w-96 h-[500px] shadow-xl border rounded-lg overflow-hidden flex flex-col">
           <CardHeader className="flex flex-row items-center justify-between p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shrink-0">

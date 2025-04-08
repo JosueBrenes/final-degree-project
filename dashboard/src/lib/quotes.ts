@@ -32,6 +32,16 @@ const getUserName = async (uid: string): Promise<string> => {
   return employeeSnap.exists() ? employeeSnap.data().nombre : "Desconocido";
 };
 
+const getClientName = async (clientId: string): Promise<string> => {
+  try {
+    const clientRef = doc(db, "clients", clientId);
+    const clientSnap = await getDoc(clientRef);
+    return clientSnap.exists() ? clientSnap.data().nombre : clientId;
+  } catch {
+    return clientId;
+  }
+};
+
 export const addQuote = async (
   uid: string,
   quote: Omit<Quote, "id" | "createdBy">
@@ -48,21 +58,25 @@ export const addQuote = async (
 
 export const getQuotes = async (): Promise<Quote[]> => {
   const snapshot = await getDocs(collection(db, "quotes"));
-  return snapshot.docs
-    .map((doc) => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        client: data.client || "",
-        date: data.date || new Date().toISOString(),
-        total: data.total || 0,
-        status: data.status || "Pending",
-        items: data.items || 0,
-        createdBy: data.createdBy || "Desconocido",
-        active: data.active !== false,
-      } as Quote;
-    })
-    .filter((quote) => quote.active);
+  const quotes: Quote[] = [];
+
+  for (const docSnap of snapshot.docs) {
+    const data = docSnap.data();
+    const clientName = await getClientName(data.client || "");
+
+    quotes.push({
+      id: docSnap.id,
+      client: clientName,
+      date: data.date || new Date().toISOString(),
+      total: data.total || 0,
+      status: data.status || "Pending",
+      items: data.items || 0,
+      createdBy: data.createdBy || "Desconocido",
+      active: data.active !== false,
+    });
+  }
+
+  return quotes.filter((quote) => quote.active);
 };
 
 export const updateQuote = async (id: string, updatedQuote: Partial<Quote>) => {

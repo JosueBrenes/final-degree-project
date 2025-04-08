@@ -1,10 +1,10 @@
-import SatisfactionDashboard from "@/components/dashboard/satisfaction/SatisfactionDashboard";
+import { PlanillaTable } from "@/components/dashboard/planillas/PlanillaTable";
 import { Wrapper } from "@/components/utils/Wrapper";
 
 const Home = () => {
   return (
     <Wrapper>
-      <SatisfactionDashboard />
+      <PlanillaTable />
     </Wrapper>
   );
 };

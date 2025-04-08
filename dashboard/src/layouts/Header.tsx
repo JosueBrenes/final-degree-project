@@ -28,12 +28,6 @@ export function DashboardHeader() {
       />
       <div className="flex items-center gap-4">
         <ThemeToggle />
-        <button
-          onClick={handleLogout}
-          className="text-red-600 hover:text-red-800 transition-colors"
-        >
-          <LogOut className="h-5 w-5" />
-        </button>
       </div>
     </header>
   );

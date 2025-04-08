@@ -15,6 +15,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import {
   Home,
@@ -26,9 +30,26 @@ import {
   Smile,
   Umbrella,
   DollarSign,
+  Clock,
+  Calendar,
+  Users,
+  Package,
+  Truck,
+  Settings,
+  LogOut,
+  ChevronDown,
+  Building,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 const icons = {
   Home,
@@ -40,9 +61,15 @@ const icons = {
   Smile,
   Umbrella,
   DollarSign,
+  Clock,
+  Calendar,
+  Users,
+  Package,
+  Truck,
+  Settings,
+  Building,
 };
 
-// 🔹 Mapeo de roles a rutas permitidas
 const accessByRole = {
   "general-manager": [
     "dashboard",
@@ -75,58 +102,96 @@ const accessByRole = {
   operators: ["dashboard", "vacations"],
 };
 
-const availableRoutes = [
-  { path: "/dashboard", label: "Panel", icon: "Home", key: "dashboard" },
+const navigationCategories = [
   {
-    path: "/dashboard/quotes",
-    label: "Cotizaciones",
-    icon: "FileText",
-    key: "quotes",
+    name: "Principal",
+    items: [
+      { path: "/dashboard", label: "Panel", icon: "Home", key: "dashboard" },
+    ],
   },
   {
-    path: "/dashboard/inventory",
-    label: "Inventario",
-    icon: "Warehouse",
-    key: "inventory",
+    name: "Recursos Humanos",
+    items: [
+      {
+        path: "/dashboard/employees",
+        label: "Empleados",
+        icon: "Users",
+        key: "employees",
+        subItems: [
+          { path: "/dashboard/employees", label: "Lista de Empleados" },
+          { path: "/dashboard/employees/horas-extra", label: "Horas Extras" },
+          { path: "/dashboard/employees/vacations", label: "Vacaciones" },
+        ],
+      },
+      {
+        path: "/dashboard/vacations",
+        label: "Solicitud de Vacaciones",
+        icon: "Umbrella",
+        key: "vacations",
+      },
+      {
+        path: "/dashboard/planilla",
+        label: "Planilla",
+        icon: "DollarSign",
+        key: "payroll",
+      },
+    ],
   },
   {
-    path: "/dashboard/employees",
-    label: "Empleados",
-    icon: "User",
-    key: "employees",
+    name: "Operaciones",
+    items: [
+      {
+        path: "/dashboard/inventory",
+        label: "Inventario",
+        icon: "Package",
+        key: "inventory",
+        subItems: [{ path: "/dashboard/inventory", label: "Productos" }],
+      },
+      {
+        path: "/dashboard/quotes",
+        label: "Cotizaciones",
+        icon: "FileText",
+        key: "quotes",
+      },
+    ],
   },
   {
-    path: "/dashboard/accounting",
-    label: "Contabilidad",
-    icon: "DollarSign",
-    key: "accounting",
-  },
-  {
-    path: "/dashboard/payroll",
-    label: "Nómina",
-    icon: "FileText",
-    key: "payroll",
-  },
-  {
-    path: "/dashboard/reports",
-    label: "Reportes",
-    icon: "BarChart2",
-    key: "reports",
-  },
-  {
-    path: "/dashboard/vacations",
-    label: "Vacaciones",
-    icon: "Umbrella",
-    key: "vacations",
+    name: "Finanzas",
+    items: [
+      {
+        path: "/dashboard/accounting",
+        label: "Contabilidad",
+        icon: "Building",
+        key: "accounting",
+      },
+      {
+        path: "/dashboard/reports",
+        label: "Reportes",
+        icon: "BarChart2",
+        key: "reports",
+      },
+    ],
   },
 ];
+
+const positionTranslations: Record<string, string> = {
+  "general-manager": "Gerente General",
+  "admin-financial-manager": "Gerente Financiero",
+  "operations-manager": "Gerente de Operaciones",
+  "plant-manager": "Gerente de Planta",
+  "admin-assistant": "Asistente Administrativo",
+  "warehouse-staff": "Personal de Almacén",
+  operators: "Operador",
+};
 
 export function DashboardSidebar() {
   const [userData, setUserData] = useState<{
     nombre: string;
     posicion: keyof typeof accessByRole;
+    avatar?: string;
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -158,7 +223,6 @@ export function DashboardSidebar() {
       const cedula = userData.cedula;
       console.log("✅ Cédula obtenida:", cedula);
 
-      // 🔹 Segundo paso: buscar al empleado en 'employees' por cédula
       console.log("🔍 Buscando empleado en 'employees' con cédula:", cedula);
       const employeeRef = doc(db, "employees", cedula);
       const employeeSnap = await getDoc(employeeRef);
@@ -172,7 +236,7 @@ export function DashboardSidebar() {
       const employeeData = employeeSnap.data();
       const rawPosicion = employeeData.posicion || "operators";
 
-      let formattedPosicion = accessByRole[rawPosicion]
+      const formattedPosicion = accessByRole[rawPosicion]
         ? (rawPosicion as keyof typeof accessByRole)
         : "operators";
 
@@ -181,6 +245,7 @@ export function DashboardSidebar() {
       setUserData({
         nombre: employeeData.nombre || "Usuario",
         posicion: formattedPosicion,
+        avatar: userData.photoURL || null,
       });
 
       console.log("✅ Datos obtenidos:", {
@@ -198,75 +263,194 @@ export function DashboardSidebar() {
     ? accessByRole[userData.posicion] || []
     : [];
 
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
+  const isActive = (path: string) => {
+    if (path === "/dashboard" && pathname === "/dashboard") {
+      return true;
+    }
+    return pathname.startsWith(path) && path !== "/dashboard";
+  };
+
+  const isSubItemActive = (path: string) => {
+    return pathname === path;
+  };
+
   return (
-    <Sidebar>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg">
-              <div className="flex items-center gap-2">
-                <Image
-                  src="/img/logo_2.png"
-                  alt="Logo"
-                  width={24}
-                  height={24}
-                  priority
-                />
-                <span className="font-semibold">Arce & Vargas</span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+    <Sidebar className="h-screen ">
+      <SidebarHeader className="py-3 px-4">
+        <div className="flex items-center">
+          <Link href="/dashboard" className="flex items-center gap-3">
+            <div className=" flex items-center justify-center">
+              <Image
+                src="/img/logo_2.png"
+                alt="Logo"
+                width={39}
+                height={39}
+                priority
+              />
+            </div>
+            <span className="font-bold text-lg">Arce & Vargas</span>
+          </Link>
+        </div>
       </SidebarHeader>
 
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navegación</SidebarGroupLabel>
-          <SidebarGroupContent>
-            {loading ? (
-              <p className="text-center text-sm text-muted-foreground p-4">
-                Cargando...
-              </p>
-            ) : userRoutes.length > 0 ? (
-              <SidebarMenu>
-                {availableRoutes
-                  .filter(({ key }) => userRoutes.includes(key))
-                  .map(({ path, label, icon }) => {
-                    const IconComponent = icons[icon];
-                    return (
-                      <SidebarMenuItem key={path}>
-                        <SidebarMenuButton asChild>
-                          <Link href={path}>
-                            <IconComponent className="mr-2 h-4 w-4" />
-                            {label}
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
-                  })}
-              </SidebarMenu>
-            ) : (
-              <p className="text-center text-sm text-muted-foreground p-4">
-                No tienes acceso a ningún módulo.
-              </p>
-            )}
-          </SidebarGroupContent>
-        </SidebarGroup>
+      <SidebarSeparator />
+
+      <SidebarContent className="px-4">
+        {loading ? (
+          <div className="flex flex-col gap-2 p-4">
+            <div className="h-8 bg-muted rounded-md animate-pulse"></div>
+            <div className="h-8 bg-muted rounded-md animate-pulse"></div>
+            <div className="h-8 bg-muted rounded-md animate-pulse"></div>
+          </div>
+        ) : userRoutes.length > 0 ? (
+          <>
+            {navigationCategories.map((category) => {
+              const accessibleItems = category.items.filter(({ key }) =>
+                userRoutes.includes(key)
+              );
+
+              if (accessibleItems.length === 0) return null;
+
+              return (
+                <SidebarGroup key={category.name}>
+                  <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground py-2">
+                    {category.name}
+                  </SidebarGroupLabel>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {accessibleItems.map((item) => {
+                        const IconComponent = icons[item.icon];
+
+                        if (item.subItems) {
+                          return (
+                            <Collapsible
+                              key={item.path}
+                              className="w-full group/collapsible"
+                            >
+                              <SidebarMenuItem>
+                                <CollapsibleTrigger asChild>
+                                  <SidebarMenuButton
+                                    isActive={isActive(item.path)}
+                                    className="w-full justify-between"
+                                  >
+                                    <div className="flex items-center">
+                                      <IconComponent className="mr-2 h-4 w-4" />
+                                      <span>{item.label}</span>
+                                    </div>
+                                    <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                                  </SidebarMenuButton>
+                                </CollapsibleTrigger>
+                              </SidebarMenuItem>
+                              <CollapsibleContent>
+                                <SidebarMenuSub>
+                                  {item.subItems.map((subItem) => (
+                                    <SidebarMenuSubItem key={subItem.path}>
+                                      <SidebarMenuSubButton
+                                        asChild
+                                        isActive={isSubItemActive(subItem.path)}
+                                      >
+                                        <Link href={subItem.path}>
+                                          {subItem.label}
+                                        </Link>
+                                      </SidebarMenuSubButton>
+                                    </SidebarMenuSubItem>
+                                  ))}
+                                </SidebarMenuSub>
+                              </CollapsibleContent>
+                            </Collapsible>
+                          );
+                        }
+
+                        // Regular menu item without subitems
+                        return (
+                          <SidebarMenuItem key={item.path}>
+                            <SidebarMenuButton
+                              asChild
+                              isActive={isActive(item.path)}
+                            >
+                              <Link href={item.path}>
+                                <IconComponent className="mr-2 h-4 w-4" />
+                                <span>{item.label}</span>
+                              </Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        );
+                      })}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              );
+            })}
+          </>
+        ) : (
+          <div className="text-center text-sm text-muted-foreground p-4 rounded-md bg-muted/50">
+            No tienes acceso a ningún módulo.
+          </div>
+        )}
       </SidebarContent>
 
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <Link href="/dashboard/profile">
-              <SidebarMenuButton size="lg" asChild>
-                <span className="text-sm font-medium">
-                  {loading ? "Cargando..." : userData?.nombre || "Usuario"}
-                </span>
-              </SidebarMenuButton>
-            </Link>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+      <div className="mt-auto">
+        <SidebarSeparator />
+        <SidebarFooter className="p-4 border-t">
+          <div className="flex items-center gap-3 mb-3">
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={userData?.avatar || ""} />
+              <AvatarFallback className="bg-blue-100 text-blue-700">
+                {userData?.nombre ? getInitials(userData.nombre) : "U"}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">
+                {loading ? "Cargando..." : userData?.nombre || "Usuario"}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                {userData?.posicion
+                  ? positionTranslations[userData.posicion] ||
+                    "Posición desconocida"
+                  : ""}
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2 mt-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start"
+              asChild
+            >
+              <Link href="/dashboard/profile">
+                <Settings className="h-4 w-4 mr-2" /> Perfil
+              </Link>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-red-600"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4 mr-2" /> Salir
+            </Button>
+          </div>
+        </SidebarFooter>
+      </div>
     </Sidebar>
   );
 }

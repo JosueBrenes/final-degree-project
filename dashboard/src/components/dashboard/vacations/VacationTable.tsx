@@ -256,9 +256,6 @@ export function VacationTable() {
                     <TableHead className="font-semibold whitespace-nowrap">
                       Motivo
                     </TableHead>
-                    <TableHead className="font-semibold text-right whitespace-nowrap">
-                      Acciones
-                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

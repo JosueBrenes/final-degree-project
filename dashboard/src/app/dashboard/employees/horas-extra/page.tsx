@@ -1,10 +1,10 @@
-import PayrollReceipt from "@/components/dashboard/employees/PayrollReceipt";
+import OvertimeHoursTable from "@/components/dashboard/employees/horasExtras/OvertimeHoursTable";
 import { Wrapper } from "@/components/utils/Wrapper";
 
 const Home = () => {
   return (
     <Wrapper>
-      <PayrollReceipt />
+      <OvertimeHoursTable />
     </Wrapper>
   );
 };

@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { useState } from "react";
-import { addEmployee } from "@/lib/employees";
+import { addEmployee, getEmployees } from "@/lib/employees";
 import { X } from "lucide-react";
 import {
   Dialog,
@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Toaster } from "@/components/ui/toaster";
 import {
   Select,
   SelectContent,
@@ -23,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 
 interface EmployeesModalProps {
   isOpen: boolean;
@@ -57,14 +59,14 @@ const EmployeesModal: React.FC<EmployeesModalProps> = ({
   });
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const localToday = today.toISOString().split("T")[0];
 
-  // Formatear la cédula automáticamente en X-XXXX-XXXX
   const formatCedula = (value: string) => {
-    const cleaned = value.replace(/\D/g, ""); // Eliminar caracteres no numéricos
+    const cleaned = value.replace(/\D/g, "");
     if (cleaned.length <= 1) return cleaned;
     if (cleaned.length <= 5)
       return `${cleaned.slice(0, 1)}-${cleaned.slice(1)}`;
@@ -107,6 +109,28 @@ const EmployeesModal: React.FC<EmployeesModalProps> = ({
     e.preventDefault();
     if (!validar()) return;
 
+    try {
+      const existingEmployees = await getEmployees();
+      const cedulaExists = existingEmployees.some(
+        (emp) => emp.cedula === formData.cedula
+      );
+
+      if (cedulaExists) {
+        setErrores((prev) => ({
+          ...prev,
+          cedula: "Ya existe un empleado registrado con esta cédula.",
+        }));
+        return;
+      }
+    } catch (err) {
+      toast({
+        title: "Error al validar cédula",
+        description: "No se pudo verificar si la cédula ya existe.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       await addEmployee(
@@ -120,6 +144,11 @@ const EmployeesModal: React.FC<EmployeesModalProps> = ({
       onClose();
     } catch (error) {
       console.error("Error al agregar empleado:", error);
+      toast({
+        title: "Error",
+        description: "Ocurrió un error al guardar el empleado.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -155,7 +184,11 @@ const EmployeesModal: React.FC<EmployeesModalProps> = ({
               onChange={handleChange}
               placeholder="X-XXXX-XXXX"
               maxLength={11}
-              className="h-10"
+              className={`h-10 ${
+                errores.cedula
+                  ? "border-red-500 focus-visible:ring-red-500"
+                  : ""
+              }`}
             />
             {errores.cedula && (
               <p className="text-red-500 text-sm">{errores.cedula}</p>
@@ -269,7 +302,6 @@ const EmployeesModal: React.FC<EmployeesModalProps> = ({
                 value={formData.fechaInicio}
                 onChange={handleChange}
                 className="h-10"
-                min={localToday}
               />
 
               {errores.fechaInicio && (

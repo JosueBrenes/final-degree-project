@@ -222,40 +222,20 @@ const EmployeesEdit: React.FC<EmployeesEditProps> = ({
             )}
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="fechaInicio" className="text-sm font-medium">
-                Fecha de Inicio
-              </Label>
-              <Input
-                id="fechaInicio"
-                type="date"
-                value={formData.fechaInicio}
-                onChange={handleChange}
-                className="h-10"
-                min={localToday}
-              />
-              {errores.fechaInicio && (
-                <p className="text-red-500 text-sm">{errores.fechaInicio}</p>
-              )}
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="salario" className="text-sm font-medium">
-                Salario
-              </Label>
-              <Input
-                id="salario"
-                type="number"
-                value={formData.salario}
-                onChange={handleChange}
-                placeholder="0.00"
-                className="h-10"
-              />
-              {errores.salario && (
-                <p className="text-red-500 text-sm">{errores.salario}</p>
-              )}
-            </div>
+          <div className="grid gap-2">
+            <Label htmlFor="fechaInicio" className="text-sm font-medium">
+              Fecha de Inicio
+            </Label>
+            <Input
+              id="fechaInicio"
+              type="date"
+              value={formData.fechaInicio}
+              onChange={handleChange}
+              className="h-10"
+            />
+            {errores.fechaInicio && (
+              <p className="text-red-500 text-sm">{errores.fechaInicio}</p>
+            )}
           </div>
 
           <div className="grid gap-2">

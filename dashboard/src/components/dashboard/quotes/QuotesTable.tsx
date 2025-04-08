@@ -1,19 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Plus,
-  Pencil,
-  Trash2,
-  Search,
-  Filter,
-  FileText,
-  FileSpreadsheet,
-} from "lucide-react";
-import { saveAs } from "file-saver";
-import * as XLSX from "xlsx";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import { Plus, Pencil, Trash2, Search, Filter, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -43,6 +31,11 @@ import {
 import { getQuotes, deleteQuote } from "@/lib/quotes";
 import QuoteEdit from "./QuoteEdit";
 import QuoteModal from "./QuoteModal";
+import exportData, {
+  formatCurrency,
+  formatDate,
+  type ExportConfig,
+} from "@/lib/export-service";
 
 interface Quote {
   id: string;
@@ -97,7 +90,6 @@ export default function QuotesTable() {
   const filterQuotes = () => {
     let filtered = [...quotes];
 
-    // Aplicar filtro de búsqueda
     if (searchQuery) {
       filtered = filtered.filter(
         (quote) =>
@@ -108,12 +100,10 @@ export default function QuotesTable() {
       );
     }
 
-    // Aplicar filtro de estado
     if (statusFilter !== "todos") {
       filtered = filtered.filter((quote) => quote.status === statusFilter);
     }
 
-    // Aplicar filtro de cliente
     if (clientFilter !== "todos") {
       filtered = filtered.filter((quote) => quote.client === clientFilter);
     }
@@ -135,65 +125,69 @@ export default function QuotesTable() {
     }
   };
 
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(
-      filteredQuotes.map((q) => ({
-        Fecha: q.date,
-        Cliente: q.client,
-        Total: q.total,
-        Estado: q.status,
-        Items: q.items,
-        "Realizado por": q.createdBy,
-      }))
+  const getExportConfig = (): ExportConfig => {
+    const totalAmount = filteredQuotes.reduce(
+      (sum, quote) => sum + quote.total,
+      0
     );
 
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Cotizaciones");
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
-    const data = new Blob([excelBuffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
+    return {
+      title: "Reporte de Cotizaciones",
+      subtitle: "Listado de cotizaciones",
+      filename: "Cotizaciones",
+      companyName: "Arce & Vargas",
+      logoPath: "/img/logo_2_white.png",
 
-    saveAs(data, "Cotizaciones.xlsx");
+      columns: [
+        {
+          header: "Fecha",
+          key: "date",
+          width: 30,
+          format: (value) => formatDate(value),
+        },
+        { header: "Cliente", key: "client", width: 35 },
+        {
+          header: "Total",
+          key: "total",
+          width: 25,
+          format: (value) => formatCurrency(value),
+          align: "right",
+        },
+        { header: "Estado", key: "status", width: 25, align: "center" },
+        { header: "Items", key: "items", width: 40 },
+        { header: "Creado por", key: "createdBy", width: 30 },
+      ],
+
+      data: filteredQuotes,
+
+      summary: {
+        title: "Resumen de Cotizaciones",
+        calculations: [
+          { label: "Total de cotizaciones", value: filteredQuotes.length },
+          {
+            label: "Monto total",
+            value: totalAmount,
+            format: (value) => formatCurrency(value),
+          },
+        ],
+        groupBy: {
+          key: "status",
+          title: "Estado",
+          countLabel: "Cantidad",
+          percentLabel: "Porcentaje",
+        },
+      },
+
+      styles: {
+        primaryColor: [0, 90, 170],
+        secondaryColor: [100, 100, 100],
+        lightColor: [240, 240, 240],
+      },
+    };
   };
 
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    const logoPath = "/img/logo.png";
-
-    doc.addImage(logoPath, "PNG", 160, 10, 30, 30);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(33, 150, 243);
-    doc.text("Reporte de Cotizaciones", 14, 20);
-
-    autoTable(doc, {
-      head: [["Fecha", "Cliente", "Total", "Estado", "Items", "Realizado por"]],
-      body: filteredQuotes.map((q) => [
-        q.date,
-        q.client,
-        new Intl.NumberFormat("es-CR", {
-          style: "currency",
-          currency: "CRC",
-        }).format(q.total),
-        q.status,
-        q.items,
-        q.createdBy,
-      ]),
-      startY: 50,
-      styles: { fontSize: 10, cellPadding: 3 },
-      headStyles: {
-        fillColor: [33, 150, 243],
-        textColor: 255,
-        fontStyle: "bold",
-      },
-      alternateRowStyles: { fillColor: [240, 240, 240] },
-      theme: "grid",
-    });
-
-    doc.save("Cotizaciones.pdf");
+  const handleExportToPDF = () => {
+    exportData.toPDF(getExportConfig());
   };
 
   const clients = Array.from(new Set(quotes.map((quote) => quote.client)));
@@ -217,14 +211,7 @@ export default function QuotesTable() {
               <Plus className="mr-2 h-4 w-4 " /> Agregar Cotización
             </Button>
             <Button
-              onClick={exportToExcel}
-              variant="outline"
-              className="bg-green-600 hover:bg-green-700 text-white border-green-600"
-            >
-              <FileSpreadsheet className="mr-2 h-4 w-4" /> Exportar Excel
-            </Button>
-            <Button
-              onClick={exportToPDF}
+              onClick={handleExportToPDF}
               variant="outline"
               className="bg-red-600 hover:bg-red-700 text-white border-red-600"
             >
@@ -324,24 +311,14 @@ export default function QuotesTable() {
                 <TableBody>
                   {filteredQuotes.map((quote) => (
                     <TableRow key={quote.id}>
-                      <TableCell className="font-medium whitespace-nowrap">
-                        {quote.id}
-                      </TableCell>
                       <TableCell className="whitespace-nowrap">
                         {quote.client}
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
-                        {new Date(quote.date).toLocaleDateString("es-ES", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+                        {formatDate(quote.date)}
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
-                        {new Intl.NumberFormat("es-CR", {
-                          style: "currency",
-                          currency: "CRC",
-                        }).format(quote.total)}
+                        {formatCurrency(quote.total)}
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
                         <Badge
@@ -394,10 +371,7 @@ export default function QuotesTable() {
           {filteredQuotes.length > 0 && (
             <div className="font-medium">
               Total:{" "}
-              {new Intl.NumberFormat("es-CR", {
-                style: "currency",
-                currency: "CRC",
-              }).format(
+              {formatCurrency(
                 filteredQuotes.reduce((sum, quote) => sum + quote.total, 0)
               )}
             </div>

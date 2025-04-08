@@ -17,6 +17,7 @@ interface Empleado {
   fechaInicio: string;
   salario: number;
   status: string;
+  vacaciones: number;
 }
 
 export const addEmployee = async (empleado: Empleado, password: string) => {
@@ -28,9 +29,12 @@ export const addEmployee = async (empleado: Empleado, password: string) => {
   }
 
   try {
+    const username = empleado.nombre.replace(/\s+/g, "").toLowerCase();
+    const email = `${username}@arceyvargas.app`;
+
     const userCredential = await createUserWithEmailAndPassword(
       auth,
-      `${empleado.cedula}@arceyvargas.com`,
+      email,
       password
     );
 
@@ -41,6 +45,7 @@ export const addEmployee = async (empleado: Empleado, password: string) => {
       fechaInicio: empleado.fechaInicio,
       salario: empleado.salario,
       status: "Activo",
+      vacaciones: 0,
     });
 
     const userRef = doc(db, "users", userCredential.user.uid);
@@ -71,6 +76,7 @@ export const getEmployees = async (): Promise<Empleado[]> => {
       fechaInicio: data.fechaInicio || "",
       salario: data.salario || 0,
       status: data.status || "Inactivo",
+      vacaciones: data.vacaciones || 0,
     } as Empleado;
   });
 };
@@ -107,4 +113,24 @@ export const updateEmployee = async (employee: Empleado) => {
     salario: employee.salario,
     status: employee.status,
   });
+};
+
+export const updateVacaciones = async () => {
+  const empleados = await getEmployees();
+
+  for (const emp of empleados) {
+    const fechaInicio = new Date(emp.fechaInicio);
+    const hoy = new Date();
+
+    const mesesTrabajados =
+      hoy.getFullYear() * 12 +
+      hoy.getMonth() -
+      (fechaInicio.getFullYear() * 12 + fechaInicio.getMonth());
+
+    const employeeRef = doc(db, "employees", emp.cedula);
+
+    await updateDoc(employeeRef, {
+      vacaciones: mesesTrabajados >= 0 ? mesesTrabajados : 0,
+    });
+  }
 };

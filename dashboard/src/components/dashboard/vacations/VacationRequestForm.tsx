@@ -21,6 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Loader2, AlertCircle, CheckCircle, Calendar } from "lucide-react";
+import { updateVacaciones } from "@/lib/employees";
 
 export function VacationRequestForm() {
   const [userCedula, setUserCedula] = useState<string | null>(null);
@@ -37,14 +38,22 @@ export function VacationRequestForm() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const localToday = today.toISOString().split("T")[0];
+  const [diasDisponibles, setDiasDisponibles] = useState<number>(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
-          setUserCedula(userDoc.data().cedula);
+          const cedula = userDoc.data().cedula;
+          setUserCedula(cedula);
           setUserName(userDoc.data().nombre || user.displayName);
+
+          const empleadoDoc = await getDoc(doc(db, "employees", cedula));
+          if (empleadoDoc.exists()) {
+            const data = empleadoDoc.data();
+            setDiasDisponibles(data.vacaciones || 0);
+          }
         }
       } else {
         setUserCedula(null);
@@ -96,6 +105,13 @@ export function VacationRequestForm() {
       return;
     }
 
+    if (requestedDays > diasDisponibles) {
+      setError(
+        `Solo tiene ${diasDisponibles} día(s) disponible(s) para solicitar.`
+      );
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -131,12 +147,37 @@ export function VacationRequestForm() {
   return (
     <Card className="shadow-md">
       <CardHeader className="border-b">
-        <CardTitle className="text-xl sm:text-2xl font-bold">
-          Solicitud de Vacaciones
-        </CardTitle>
-        <CardDescription>
-          Complete el formulario para solicitar sus días de vacaciones
-        </CardDescription>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
+          <div>
+            <CardTitle className="text-xl sm:text-2xl font-bold">
+              Solicitud de Vacaciones
+            </CardTitle>
+            <CardDescription>
+              Complete el formulario para solicitar sus días de vacaciones
+            </CardDescription>
+          </div>
+          <div className="ml-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 px-3 text-xs"
+              onClick={async () => {
+                await updateVacaciones();
+                if (userCedula) {
+                  const empleadoDoc = await getDoc(
+                    doc(db, "employees", userCedula)
+                  );
+                  if (empleadoDoc.exists()) {
+                    const data = empleadoDoc.data();
+                    setDiasDisponibles(data.vacaciones || 0);
+                  }
+                }
+              }}
+            >
+              Actualizar días disponibles
+            </Button>
+          </div>
+        </div>
       </CardHeader>
 
       <CardContent className="p-4 sm:p-6">
@@ -204,6 +245,11 @@ export function VacationRequestForm() {
               />
             </div>
           </div>
+
+          <p className="text-sm text-muted-foreground text-right">
+            Días disponibles:{" "}
+            <span className="font-semibold">{diasDisponibles}</span>
+          </p>
 
           {requestedDays > 0 && (
             <div className="rounded-lg bg-blue-50 p-3 sm:p-4 text-blue-800 border border-blue-200">

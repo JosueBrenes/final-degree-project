@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Search, Filter } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Search,
+  Filter,
+  Clock,
+  Calendar,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -53,6 +61,16 @@ const departmentColors: Record<string, string> = {
   Mecánica: "bg-teal-500 text-white",
 };
 
+const positionTranslations: Record<string, string> = {
+  "general-manager": "Gerente General",
+  "finance-manager": "Gerente Financiero",
+  "operations-manager": "Gerente de Operaciones",
+  "plant-manager": "Gerente de Planta",
+  "admin-assistant": "Asistente Administrativo",
+  "warehouse-staff": "Personal de Almacén",
+  operator: "Operador",
+};
+
 export default function EmployeesTable() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
@@ -88,7 +106,6 @@ export default function EmployeesTable() {
   const filterEmployees = () => {
     let filtered = [...employees];
 
-    // Aplicar filtro de búsqueda
     if (searchQuery) {
       filtered = filtered.filter(
         (employee) =>
@@ -155,12 +172,14 @@ export default function EmployeesTable() {
               Gestione empleados, sus posiciones, departamentos y desempeño.
             </CardDescription>
           </div>
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            className="self-start bg-blue-600 sm:self-auto"
-          >
-            <Plus className="mr-2 h-4 w-4" /> Agregar Empleado
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              className="self-start bg-blue-600 sm:self-auto"
+            >
+              <Plus className="mr-2 h-4 w-4" /> Agregar Empleado
+            </Button>
+          </div>
         </div>
       </CardHeader>
 
@@ -243,9 +262,7 @@ export default function EmployeesTable() {
                     <TableHead className="font-semibold whitespace-nowrap">
                       Fecha de Inicio
                     </TableHead>
-                    <TableHead className="font-semibold whitespace-nowrap">
-                      Salario
-                    </TableHead>
+
                     <TableHead className="font-semibold text-right whitespace-nowrap">
                       Acciones
                     </TableHead>
@@ -261,7 +278,8 @@ export default function EmployeesTable() {
                         {employee.cedula}
                       </TableCell>
                       <TableCell className="max-w-[120px] truncate">
-                        {employee.posicion}
+                        {positionTranslations[employee.posicion] ||
+                          employee.posicion}
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
                         <Badge
@@ -294,12 +312,7 @@ export default function EmployeesTable() {
                           }
                         )}
                       </TableCell>
-                      <TableCell className="whitespace-nowrap">
-                        {new Intl.NumberFormat("es-CR", {
-                          style: "currency",
-                          currency: "CRC",
-                        }).format(employee.salario)}
-                      </TableCell>
+
                       <TableCell className="text-right whitespace-nowrap">
                         <div className="flex justify-end gap-2">
                           <Button

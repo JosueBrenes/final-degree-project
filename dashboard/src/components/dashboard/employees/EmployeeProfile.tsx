@@ -95,7 +95,7 @@ export default function EmployeeProfile() {
         console.log("✅ Datos del empleado encontrados:", employeeData);
         setEmployee({
           cedula,
-          email: userData.email, // Email del usuario autenticado
+          email: userData.email,
           ...employeeData,
         } as EmployeeData);
       } else {

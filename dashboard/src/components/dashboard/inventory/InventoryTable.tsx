@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, Search, Filter } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Filter, FileText } from "lucide-react";
 import {
   getInventoryItems,
   deleteInventoryItem,
@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/select";
 import EditItemModal from "./EditItemModal";
 import AddItemModal from "./AddItemModal";
+import exportData, { type ExportConfig } from "@/lib/export-service";
 
 const statusColors: Record<string, string> = {
   Disponible: "bg-green-500 text-white",
@@ -136,6 +137,105 @@ export function InventoryTable() {
 
   const statuses = Array.from(new Set(inventory.map((item) => item.status)));
 
+  const formatCurrency = (value: number): string => {
+    return `CRC ${value.toLocaleString("es-CR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  };
+
+  const getExportConfig = (): ExportConfig => {
+    const totalValue = filteredInventory.reduce(
+      (sum, item) => sum + item.total,
+      0
+    );
+
+    const totalItems = filteredInventory.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
+
+    // Group items by category
+    const categoryGroups = filteredInventory.reduce((acc, item) => {
+      if (!acc[item.category]) {
+        acc[item.category] = {
+          count: 0,
+          total: 0,
+        };
+      }
+      acc[item.category].count += item.quantity;
+      acc[item.category].total += item.total;
+      return acc;
+    }, {} as Record<string, { count: number; total: number }>);
+
+    return {
+      title: "Reporte de Inventario",
+      subtitle: "Listado de ítems en inventario",
+      filename: "Inventario",
+      companyName: "Arce & Vargas",
+      logoPath: "/img/logo_2_white.png",
+
+      columns: [
+        { header: "Nombre", key: "name", width: 40 },
+        { header: "Categoría", key: "category", width: 35 },
+        {
+          header: "Cantidad",
+          key: "quantity",
+          width: 20,
+          align: "center",
+        },
+        {
+          header: "Precio Unitario",
+          key: "pricePerUnit",
+          width: 30,
+          format: (value) => formatCurrency(value),
+          align: "right",
+        },
+        {
+          header: "Total",
+          key: "total",
+          width: 30,
+          format: (value) => formatCurrency(value),
+          align: "right",
+        },
+      ],
+
+      data: filteredInventory,
+
+      summary: {
+        title: "Resumen de Inventario",
+        calculations: [
+          { label: "Total de ítems", value: filteredInventory.length },
+          {
+            label: "Cantidad total de unidades",
+            value: totalItems,
+          },
+          {
+            label: "Valor total del inventario",
+            value: totalValue,
+            format: (value) => formatCurrency(value),
+          },
+        ],
+        groupBy: {
+          key: "category",
+          title: "Categoría",
+          countLabel: "Cantidad",
+          percentLabel: "Porcentaje",
+        },
+      },
+
+      styles: {
+        primaryColor: [0, 90, 170],
+        secondaryColor: [100, 100, 100],
+        lightColor: [240, 240, 240],
+      },
+    };
+  };
+
+  const handleExportToPDF = () => {
+    exportData.toPDF(getExportConfig());
+  };
+
   return (
     <Card className="shadow-md">
       <CardHeader className="border-b">
@@ -146,12 +246,22 @@ export function InventoryTable() {
               Gestione ítems, categorías, stock y ubicaciones.
             </CardDescription>
           </div>
-          <Button
-            onClick={() => setAddModalOpen(true)}
-            className="self-start sm:self-auto bg-blue-600"
-          >
-            <Plus className="mr-2 h-4 w-4" /> Agregar Ítem
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              onClick={() => setAddModalOpen(true)}
+              className="self-start sm:self-auto bg-blue-600"
+            >
+              <Plus className="mr-2 h-4 w-4" /> Agregar Ítem
+            </Button>
+            <Button
+              onClick={handleExportToPDF}
+              variant="outline"
+              className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Exportar PDF
+            </Button>
+          </div>
         </div>
       </CardHeader>
 
