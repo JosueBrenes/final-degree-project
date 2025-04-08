@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, Search, Filter } from "lucide-react";
+import { Plus, Pencil, UserRoundMinus, Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -63,6 +63,8 @@ export default function EmployeesTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("todos");
   const [statusFilter, setStatusFilter] = useState("todos");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchEmployees();
@@ -71,6 +73,13 @@ export default function EmployeesTable() {
   useEffect(() => {
     filterEmployees();
   }, [employees, searchQuery, departmentFilter, statusFilter]);
+
+  useEffect(() => {
+    const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
+    if (currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  }, [filteredEmployees]);
 
   const fetchEmployees = async () => {
     setIsLoading(true);
@@ -118,6 +127,12 @@ export default function EmployeesTable() {
     setFilteredEmployees(filtered);
   };
 
+  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
+  const paginatedEmployees = filteredEmployees.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const handleEmployeeUpdated = async () => {
     await fetchEmployees();
   };
@@ -157,7 +172,7 @@ export default function EmployeesTable() {
           </div>
           <Button
             onClick={() => setIsModalOpen(true)}
-            className="self-start sm:self-auto"
+            className="self-start bg-blue-600 sm:self-auto"
           >
             <Plus className="mr-2 h-4 w-4" /> Agregar Empleado
           </Button>
@@ -252,7 +267,7 @@ export default function EmployeesTable() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredEmployees.map((employee) => (
+                {paginatedEmployees.map((employee) => (      //{filteredEmployees.map((employee) => ( ---Cambio para la paginacion, por si falla regresar a usar este
                     <TableRow key={employee.cedula}>
                       <TableCell className="font-medium max-w-[150px] truncate">
                         {employee.nombre}
@@ -314,7 +329,7 @@ export default function EmployeesTable() {
                             size="icon"
                             onClick={() => handleDelete(employee.cedula)}
                           >
-                            <Trash2 className="h-4 w-4 text-red-500" />
+                            <UserRoundMinus className="h-4 w-4 text-red-500" />
                           </Button>
                         </div>
                       </TableCell>
@@ -333,14 +348,32 @@ export default function EmployeesTable() {
             Mostrando {filteredEmployees.length} de {employees.length} empleados
           </div>
           {filteredEmployees.length > 0 && (
-            <div className="font-medium">
-              Total de salarios:{" "}
-              {new Intl.NumberFormat("es-CR", {
-                style: "currency",
-                currency: "CRC",
-              }).format(
-                filteredEmployees.reduce((sum, emp) => sum + emp.salario, 0)
-              )}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 ml-auto">
+              <span className="font-medium">
+                Total de salarios: {new Intl.NumberFormat("es-CR", {
+                  style: "currency",
+                  currency: "CRC",
+                }).format(filteredEmployees.reduce((sum, emp) => sum + emp.salario, 0))}
+              </span>
+              <div className="flex gap-2 items-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                >
+                  Anterior
+                </Button>
+                <span>Página {currentPage} de {totalPages}</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                >
+                  Siguiente
+                </Button>
+              </div>
             </div>
           )}
         </div>
