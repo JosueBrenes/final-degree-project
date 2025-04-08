@@ -271,7 +271,7 @@ export function DashboardSidebar() {
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      window.location.href = "/login";
+      window.location.href = "/";
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }

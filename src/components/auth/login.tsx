@@ -93,14 +93,6 @@ export function Login() {
           </Button>
         </form>
       </CardContent>
-      <CardFooter className="flex flex-col items-center space-y-2">
-        <Link
-          href="/auth/forgot-password"
-          className="text-gray-700 dark:text-gray-400"
-        >
-          Forgot your password?
-        </Link>
-      </CardFooter>
     </Card>
   );
 }
